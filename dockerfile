@@ -27,6 +27,6 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY traefik/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exponha a porta padrão do Nginx
-EXPOSE 80
+EXPOSE 24
 
 CMD ["nginx", "-g", "daemon off;"]
