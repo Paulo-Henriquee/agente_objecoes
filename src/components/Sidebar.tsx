@@ -13,27 +13,33 @@ const Sidebar: React.FC = () => {
       label: "Início",
       to: "/inicio",
       icon: (
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
-        </svg>
+        <img
+          src="https://img.icons8.com/?size=100&id=83326&format=png&color=000000"
+          alt="Início"
+          className="w-5 h-5 mr-2"
+        />
       ),
     },
     {
       label: "Chat",
       to: "/chat",
       icon: (
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13h4v-2H3v2zm6 8h2v-2h-2v2zm0-18v2h2V3h-2zm12 7v2h-2v-2h2zm-8-4V3h-2v2h2zm-2 14v2h2v-2h-2zm4-2v2h2v-2h-2z" />
-        </svg>
+        <img
+          src="https://img.icons8.com/?size=100&id=BgCyOQRJulgd&format=png&color=000000"
+          alt="Chat"
+          className="w-5 h-5 mr-2"
+        />
       ),
     },
     {
-      label: "Vendas",
-      to: "/vendas",
+      label: "Rank",
+      to: "/rank",
       icon: (
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M9 21V10m6 11V10" />
-        </svg>
+        <img
+          src="https://img.icons8.com/?size=100&id=DrwIcwCjRehp&format=png&color=000000"
+          alt="Rank"
+          className="w-5 h-5 mr-2"
+        />
       ),
     },
     {
@@ -45,7 +51,6 @@ const Sidebar: React.FC = () => {
         </svg>
       ),
     },
-    
     ...(user?.role === "admin"
       ? [
           {
@@ -53,7 +58,11 @@ const Sidebar: React.FC = () => {
             to: "/configuracoes",
             icon: (
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v1m0 14v1m8-8h1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.02 0l-.71.71M6.34 17.66l-.71.71" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4v1m0 14v1m8-8h1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.02 0l-.71.71M6.34 17.66l-.71.71"
+                />
               </svg>
             ),
           },

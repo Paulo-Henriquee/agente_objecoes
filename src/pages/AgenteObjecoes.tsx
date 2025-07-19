@@ -18,18 +18,17 @@ const AgenteObjecoes: React.FC = () => {
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [testeFinalizado, setTesteFinalizado] = useState(false);
+  const [colorToggle, setColorToggle] = useState(true);
   const chatRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
 
-  // Scroll automático
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [mensagens, digitandoIA]);
 
-  // Iniciar contagem quando atingir 4 interações do usuário + IA
   useEffect(() => {
     const ultima = mensagens[mensagens.length - 1];
     if (respostasUsuario >= 4 && ultima?.tipo === "ia" && !showCountdown) {
@@ -39,19 +38,29 @@ const AgenteObjecoes: React.FC = () => {
     }
   }, [mensagens, respostasUsuario, showCountdown]);
 
-  // Contagem regressiva
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+    let colorInterval: NodeJS.Timeout;
+
     if (showCountdown && countdown > 0) {
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setCountdown((prev) => prev - 1);
       }, 1000);
-      return () => clearTimeout(timer);
+
+      colorInterval = setInterval(() => {
+        setColorToggle((prev) => !prev);
+      }, 500);
     }
 
     if (showCountdown && countdown === 0) {
       setTesteFinalizado(true);
       setShowCountdown(false);
     }
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(colorInterval);
+    };
   }, [countdown, showCountdown]);
 
   const enviarMensagem = () => {
@@ -84,12 +93,14 @@ const AgenteObjecoes: React.FC = () => {
   }
 
   return (
-    <div className="relative flex flex-col h-full overflow-hidden bg-blue-50 w-full max-w-none">
-      <div
-        id="chat"
-        ref={chatRef}
-        className="flex-1 overflow-y-auto pb-24 relative w-full"
-      >
+    <div className="flex flex-col min-h-screen w-full max-w-screen bg-blue-50">
+      {/* TÍTULO FIXO NO TOPO */}
+      <header className="bg-blue-700 text-white text-center py-2 text-sm font-semibold">
+        AGENTE DE OBJEÇÕES - HEALTH SAFETY
+      </header>
+
+      {/* ÁREA DE CONTEÚDO DO CHAT */}
+      <main className="flex-1 overflow-y-auto px-3 pt-4 relative" ref={chatRef}>
         <div
           className="absolute inset-0 opacity-5 bg-no-repeat bg-center bg-contain pointer-events-none"
           style={{
@@ -97,37 +108,57 @@ const AgenteObjecoes: React.FC = () => {
           }}
         ></div>
 
-        <div className="relative z-10 space-y-2 px-3 pt-4">
-          {showCountdown && (
-            <div className="text-center text-sm font-semibold text-blue-800 mb-2">
-              Tempo restante para finalizar simulação: {countdown}s
+        <div className="relative z-10 space-y-2">
+          {showCountdown && !testeFinalizado && (
+            <div className="flex flex-col items-center mb-2 gap-2">
+              <p
+                className={`text-sm font-semibold ${
+                  colorToggle ? "text-black" : "text-red-600"
+                }`}
+              >
+                Tempo restante para finalizar simulação: {countdown}s
+              </p>
+              <button
+                onClick={() => navigate("/rank")}
+                className="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 text-sm rounded-full transition"
+              >
+                VER RANK
+              </button>
             </div>
           )}
 
           {mensagens.map((msg, index) => (
             <div
               key={index}
-              className={`max-w-[80%] p-3 rounded-2xl text-sm break-words ${
-                msg.tipo === "user"
-                  ? "bg-blue-800 text-white ml-auto"
-                  : "bg-blue-200 text-blue-900 mr-auto"
-              }`}
+              className={`flex ${msg.tipo === "user" ? "justify-end" : "justify-start"}`}
             >
-              {msg.texto}
+              <div
+                className={`max-w-[50%] w-fit p-3 rounded-2xl text-sm whitespace-pre-wrap break-words ${
+                  msg.tipo === "user"
+                    ? "bg-blue-800 text-white"
+                    : "bg-blue-200 text-blue-900"
+                }`}
+                style={{ wordBreak: "break-word" }}
+              >
+                {msg.texto}
+              </div>
             </div>
           ))}
 
           {digitandoIA && (
-            <div className="msg bg-blue-200 text-blue-900 p-3 rounded-2xl w-fit mr-auto flex gap-1 items-center text-sm">
-              <span className="animate-bounce">.</span>
-              <span className="animate-bounce delay-200">.</span>
-              <span className="animate-bounce delay-400">.</span>
+            <div className="flex justify-start">
+              <div className="msg bg-blue-200 text-blue-900 p-3 rounded-2xl w-fit flex gap-1 items-center text-sm">
+                <span className="animate-bounce">.</span>
+                <span className="animate-bounce delay-200">.</span>
+                <span className="animate-bounce delay-400">.</span>
+              </div>
             </div>
           )}
         </div>
-      </div>
+      </main>
 
-      <div className="p-3 bg-white flex items-center gap-2 border-t border-gray-300 absolute bottom-0 w-full">
+      {/* CAMPO DE MENSAGEM FIXO NO RODAPÉ */}
+      <footer className="p-3 bg-white flex items-center gap-2 border-t border-gray-300">
         <input
           type="text"
           placeholder="Digite sua resposta como vendedor..."
@@ -155,7 +186,7 @@ const AgenteObjecoes: React.FC = () => {
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
         </button>
-      </div>
+      </footer>
 
       {testeFinalizado && <ModalFinal />}
     </div>

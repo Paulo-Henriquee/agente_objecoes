@@ -8,7 +8,7 @@ import Configuracoes from "./pages/Configuracoes";
 import Home from "./pages/Home";
 
 import Servicos from "./pages/Servicos";
-import Vendas from "./pages/Vendas";
+import Rank from "./pages/Rank";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./hooks/useAuth";
@@ -61,10 +61,10 @@ const AppRoutes: React.FC = () => (
     />
 
     <Route
-      path="/vendas"
+      path="/rank"
       element={
         <ProtectedRoute>
-          <Vendas />
+          <Rank />
         </ProtectedRoute>
       }
     />

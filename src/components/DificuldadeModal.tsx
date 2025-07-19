@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
 
 interface DificuldadeModalProps {
@@ -9,10 +10,11 @@ const niveis = ["Fácil", "Médio", "Difícil", "Profissional"];
 
 const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
   const [nivelSelecionado, setNivelSelecionado] = React.useState("Fácil");
+  const navigate = useNavigate();
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-cover bg-center"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-cover bg-center px-4"
       style={{ backgroundImage: `url(${fundo})` }}
     >
       {/* camada escura por cima do fundo */}
@@ -52,12 +54,22 @@ const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
           ))}
         </div>
 
-        <button
-          onClick={() => onStart(nivelSelecionado)}
-          className="bg-blue-700 text-white px-6 py-2 rounded-full hover:bg-blue-800 transition"
-        >
-          Iniciar
-        </button>
+        {/* Botões lado a lado */}
+        <div className="flex justify-between gap-4">
+          <button
+            onClick={() => navigate("/")}
+            className="w-1/2 text-blue-700 border border-blue-700 px-4 py-2 rounded-full hover:bg-blue-50 transition"
+          >
+            Voltar ao Início
+          </button>
+
+          <button
+            onClick={() => onStart(nivelSelecionado)}
+            className="w-1/2 bg-blue-700 text-white px-4 py-2 rounded-full hover:bg-blue-800 transition"
+          >
+            Iniciar
+          </button>
+        </div>
       </div>
     </div>
   );

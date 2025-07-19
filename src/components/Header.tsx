@@ -50,11 +50,8 @@ const Header: React.FC = () => {
           <nav className="flex flex-col space-y-2">
             <Link to="/inicio" className="text-gray-700 font-medium">Início</Link>
             <Link to="/dashboard" className="text-gray-700 font-medium">Dashboard</Link>
-            <Link to="/vendas" className="text-gray-700 font-medium">Vendas</Link>
+            <Link to="/vendas" className="text-gray-700 font-medium">Rank</Link>
             <Link to="/servicos" className="text-gray-700 font-medium">Serviços</Link>
-            <Link to="/clientes" className="text-gray-700 font-medium">Clientes</Link>
-            <Link to="/vendedores" className="text-gray-700 font-medium">Vendedores</Link>
-            <Link to="/estoque" className="text-gray-700 font-medium">Estoque</Link>
 
             {user?.role === "admin" && (
               <Link to="/configuracoes" className="text-gray-700 font-medium">Configurações</Link>
