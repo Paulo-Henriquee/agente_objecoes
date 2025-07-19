@@ -1,76 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
-import DificuldadeModal from "../components/DificuldadeModal";
-import ModalFinal from "../components/ModalFinal";
-import { useNavigate } from "react-router-dom";
 
 interface Mensagem {
   texto: string;
   tipo: "user" | "ia";
 }
 
-const AgenteObjecoes: React.FC = () => {
+const Duvidas: React.FC = () => {
   const [mensagem, setMensagem] = useState("");
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [digitandoIA, setDigitandoIA] = useState(false);
-  const [nivel, setNivel] = useState<string | null>(null);
-  const [respostasUsuario, setRespostasUsuario] = useState(0);
-  const [bloquearEnvio, setBloquearEnvio] = useState(false);
-  const [showCountdown, setShowCountdown] = useState(false);
-  const [countdown, setCountdown] = useState(10);
-  const [testeFinalizado, setTesteFinalizado] = useState(false);
-  const [colorToggle, setColorToggle] = useState(true);
   const chatRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, [mensagens, digitandoIA]);
-
-  useEffect(() => {
-    const ultima = mensagens[mensagens.length - 1];
-    if (respostasUsuario >= 4 && ultima?.tipo === "ia" && !showCountdown) {
-      setBloquearEnvio(true);
-      setShowCountdown(true);
-      setCountdown(10);
-    }
-  }, [mensagens, respostasUsuario, showCountdown]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    let colorInterval: NodeJS.Timeout;
-
-    if (showCountdown && countdown > 0) {
-      timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
-      colorInterval = setInterval(() => setColorToggle((prev) => !prev), 500);
-    }
-
-    if (showCountdown && countdown === 0) {
-      setTesteFinalizado(true);
-      setShowCountdown(false);
-    }
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(colorInterval);
-    };
-  }, [countdown, showCountdown]);
-
-  const enviarMensagem = () => {
-    if (!mensagem.trim() || bloquearEnvio) return;
+  const handleEnviar = () => {
+    if (!mensagem.trim()) return;
 
     const novaMensagem: Mensagem = { texto: mensagem.trim(), tipo: "user" };
     setMensagens((prev) => [...prev, novaMensagem]);
     setMensagem("");
     setDigitandoIA(true);
-    setRespostasUsuario((prev) => prev + 1);
 
     setTimeout(() => {
       setDigitandoIA(false);
       setMensagens((prev) => [
         ...prev,
-        { texto: "Resposta simulada da IA aqui...", tipo: "ia" },
+        { texto: "Claro! Aqui está uma resposta da Nina, sua assistente virtual.", tipo: "ia" },
       ]);
     }, 1000);
   };
@@ -78,38 +31,33 @@ const AgenteObjecoes: React.FC = () => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      enviarMensagem();
+      handleEnviar();
     }
   };
 
-  if (!nivel) {
-    return <DificuldadeModal onStart={(nivelEscolhido) => setNivel(nivelEscolhido)} />;
-  }
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [mensagens, digitandoIA]);
 
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 py-4"
       style={{ backgroundImage: `url('/src/assets/fundo.png')` }}
     >
-      <div className="bg-black/60 text-white rounded-xl p-6 max-w-4xl w-full flex flex-col">
+      <div className="bg-black/60 text-white rounded-xl p-6 max-w-6xl w-full flex flex-col">
+        {/* Título */}
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
-          AGENTE DE OBJEÇÕES - HEALTH SAFETY
+          DÚVIDAS - HEALTH SAFETY
         </h1>
 
-        {showCountdown && !testeFinalizado && (
-          <div className="text-center mb-4">
-            <p className={`text-sm font-semibold ${colorToggle ? "text-white" : "text-red-400"}`}>
-              Tempo restante para finalizar simulação: {countdown}s
-            </p>
-            <button
-              onClick={() => navigate("/rank")}
-              className="mt-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 text-sm rounded-full transition"
-            >
-              VER RANK
-            </button>
-          </div>
-        )}
+        {/* Mensagem introdutória */}
+        <p className="text-center text-sm md:text-base text-white mb-6">
+          Olá! Eu sou a <strong>Nina</strong>, sua assistente virtual de dúvidas. Estou aqui para te ajudar a encontrar respostas com mais rapidez, clareza e praticidade.
+        </p>
 
+        {/* Chat com rolagem */}
         <div
           ref={chatRef}
           className="flex-1 bg-white/10 rounded-lg p-4 overflow-y-auto mb-4 space-y-2 max-h-[50vh]"
@@ -148,21 +96,20 @@ const AgenteObjecoes: React.FC = () => {
           )}
         </div>
 
+        {/* Campo de entrada */}
         <div className="flex items-center mt-2">
           <input
             type="text"
-            placeholder="Digite sua resposta como vendedor..."
+            placeholder="Digite sua dúvida aqui..."
             className="flex-1 rounded-full px-4 py-2 text-gray-900 text-sm focus:outline-none border border-gray-300"
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={bloquearEnvio}
           />
           <button
-            onClick={enviarMensagem}
+            onClick={handleEnviar}
             aria-label="Enviar"
-            disabled={bloquearEnvio}
-            className={`ml-2 p-2 ${bloquearEnvio ? "opacity-50 cursor-not-allowed" : ""}`}
+            className="ml-2 p-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -176,10 +123,8 @@ const AgenteObjecoes: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {testeFinalizado && <ModalFinal />}
     </div>
   );
 };
 
-export default AgenteObjecoes;
+export default Duvidas;

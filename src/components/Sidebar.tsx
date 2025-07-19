@@ -43,12 +43,14 @@ const Sidebar: React.FC = () => {
       ),
     },
     {
-      label: "Serviços",
-      to: "/servicos",
+      label: "Duvidas",
+      to: "/duvidas",
       icon: (
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-6h6v6m-3-12a9 9 0 100 18 9 9 0 000-18z" />
-        </svg>
+        <img
+          src="https://img.icons8.com/?size=100&id=98973&format=png&color=000000"
+          alt="Duvidas"
+          className="w-5 h-5 mr-2"
+        />
       ),
     },
     ...(user?.role === "admin"
@@ -57,7 +59,13 @@ const Sidebar: React.FC = () => {
             label: "Configurações",
             to: "/configuracoes",
             icon: (
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

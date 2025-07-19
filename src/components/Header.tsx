@@ -51,7 +51,7 @@ const Header: React.FC = () => {
             <Link to="/inicio" className="text-gray-700 font-medium">Início</Link>
             <Link to="/dashboard" className="text-gray-700 font-medium">Dashboard</Link>
             <Link to="/vendas" className="text-gray-700 font-medium">Rank</Link>
-            <Link to="/servicos" className="text-gray-700 font-medium">Serviços</Link>
+            <Link to="/servicos" className="text-gray-700 font-medium">Duvidas</Link>
 
             {user?.role === "admin" && (
               <Link to="/configuracoes" className="text-gray-700 font-medium">Configurações</Link>

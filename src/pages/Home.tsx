@@ -29,32 +29,31 @@ const Home: React.FC = () => {
     navigate("/chat");
   };
 
-  // Divide as regras em 3 blocos de 5
   const blocos = [regras.slice(0, 5), regras.slice(5, 10), regras.slice(10, 15)];
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center"
+      className="h-full w-full flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: `url(${fundo})` }}
     >
-      <div className="bg-black bg-opacity-50 p-10 rounded-xl max-w-6xl w-full text-white">
+      <div className="bg-black/60 text-white rounded-xl p-6 max-w-6xl w-full">
         <h1 className="text-3xl font-bold mb-2">Início</h1>
-        <p className="mb-8">
+        <p className="mb-6">
           Seja bem-vindo ao sistema HealthScore,{" "}
           <span className="font-semibold">{user?.username}</span>!
         </p>
 
-        <div className="flex flex-col gap-8">
-          <h2 className="text-xl font-semibold text-white">📋 Regras de Uso do Sistema</h2>
+        <div className="flex flex-col gap-6">
+          <h2 className="text-xl font-semibold">Regras de Uso do Sistema</h2>
 
-          <div className="flex flex-col lg:flex-row gap-6 justify-between">
+          <div className="flex flex-col lg:flex-row gap-4">
             {blocos.map((bloco, i) => (
               <div
                 key={i}
                 className="bg-white/20 backdrop-blur-md rounded-xl p-4 w-full lg:w-1/3 space-y-2"
               >
                 {bloco.map((regra, index) => (
-                  <div key={index} className="flex items-start text-white">
+                  <div key={index} className="flex items-start">
                     <span className="mr-2 text-blue-300">→</span>
                     <span>{regra}</span>
                   </div>
@@ -63,7 +62,7 @@ const Home: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-4">
             <button
               onClick={handleIniciar}
               className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"

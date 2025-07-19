@@ -7,7 +7,7 @@ import NotFound from "./pages/NotFound";
 import Configuracoes from "./pages/Configuracoes";
 import Home from "./pages/Home";
 
-import Servicos from "./pages/Servicos";
+import Duvidas from "./pages/Duvidas";
 import Rank from "./pages/Rank";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -52,10 +52,10 @@ const AppRoutes: React.FC = () => (
     />
 
     <Route
-      path="/servicos"
+      path="/duvidas"
       element={
         <ProtectedRoute>
-          <Servicos />
+          <Duvidas />
         </ProtectedRoute>
       }
     />
