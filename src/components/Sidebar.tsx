@@ -8,48 +8,58 @@ const Sidebar: React.FC = () => {
 
   if (location.pathname === "/login") return null;
 
+  const iconBaseClass = "w-5 h-5 mr-2 transition-colors";
+
   const menuItems = [
     {
       label: "Início",
       to: "/inicio",
-      icon: (
+      icon: (isActive: boolean) => (
         <img
-          src="https://img.icons8.com/?size=100&id=83326&format=png&color=000000"
+          src={`https://img.icons8.com/?size=100&id=83326&format=png&color=${
+            isActive ? "04436E" : "FFFFFF"
+          }`}
           alt="Início"
-          className="w-5 h-5 mr-2"
+          className={iconBaseClass}
         />
       ),
     },
     {
       label: "Chat",
       to: "/chat",
-      icon: (
+      icon: (isActive: boolean) => (
         <img
-          src="https://img.icons8.com/?size=100&id=BgCyOQRJulgd&format=png&color=000000"
+          src={`https://img.icons8.com/?size=100&id=BgCyOQRJulgd&format=png&color=${
+            isActive ? "04436E" : "FFFFFF"
+          }`}
           alt="Chat"
-          className="w-5 h-5 mr-2"
+          className={iconBaseClass}
         />
       ),
     },
     {
       label: "Rank",
       to: "/rank",
-      icon: (
+      icon: (isActive: boolean) => (
         <img
-          src="https://img.icons8.com/?size=100&id=DrwIcwCjRehp&format=png&color=000000"
+          src={`https://img.icons8.com/?size=100&id=49FsAPtMkn2q&format=png&color=${
+            isActive ? "04436E" : "FFFFFF"
+          }`}
           alt="Rank"
-          className="w-5 h-5 mr-2"
+          className={iconBaseClass}
         />
       ),
     },
     {
       label: "Duvidas",
       to: "/duvidas",
-      icon: (
+      icon: (isActive: boolean) => (
         <img
-          src="https://img.icons8.com/?size=100&id=98973&format=png&color=000000"
+          src={`https://img.icons8.com/?size=100&id=98973&format=png&color=${
+            isActive ? "04436E" : "FFFFFF"
+          }`}
           alt="Duvidas"
-          className="w-5 h-5 mr-2"
+          className={iconBaseClass}
         />
       ),
     },
@@ -58,11 +68,11 @@ const Sidebar: React.FC = () => {
           {
             label: "Configurações",
             to: "/configuracoes",
-            icon: (
+            icon: (isActive: boolean) => (
               <svg
-                className="w-5 h-5 mr-2"
+                className={iconBaseClass}
                 fill="none"
-                stroke="currentColor"
+                stroke={isActive ? "#04436E" : "white"}
                 strokeWidth={2}
                 viewBox="0 0 24 24"
               >
@@ -79,7 +89,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="hidden lg:flex w-56 bg-white shadow h-screen sticky top-0 flex-col">
+    <aside className="hidden lg:flex w-56 bg-[#04436E] shadow h-screen sticky top-0 flex-col">
       <nav className="flex-1 py-6">
         <ul className="space-y-2">
           {menuItems.map((item) => (
@@ -89,14 +99,18 @@ const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
                     isActive
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-700 hover:bg-blue-50"
+                      ? "bg-white text-[#04436E]"
+                      : "text-white hover:bg-[#06568D]"
                   }`
                 }
                 end
               >
-                {item.icon}
-                {item.label}
+                {({ isActive }) => (
+                  <>
+                    {item.icon(isActive)}
+                    {item.label}
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
