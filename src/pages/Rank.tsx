@@ -22,6 +22,7 @@ const Rank: React.FC = () => {
   useEffect(() => {
     (async () => {
       console.log("Rank useEffect iniciou.");
+
       const token = getAuthToken();
       if (!token) return;
 
@@ -30,16 +31,25 @@ const Rank: React.FC = () => {
 
         const rankingComNomes: Vendedor[] = await Promise.all(
           result.map(async (item: any) => {
-            const user = await getUsuarioPorId(item.id_usuario, token);
-            return {
-              id_usuario: item.id_usuario,
-              nome: user.nome,
-              pontuacao_acumulada: item.pontuacao_acumulada
-            };
+            try {
+              const user = await getUsuarioPorId(item.id_usuario); // 🔄 token removido
+              return {
+                id_usuario: item.id_usuario,
+                nome: user.username,
+                pontuacao_acumulada: item.pontuacao_acumulada,
+              };
+            } catch (err) {
+              console.warn(`Usuário ${item.id_usuario} não encontrado.`);
+              return {
+                id_usuario: item.id_usuario,
+                nome: "Desconhecido",
+                pontuacao_acumulada: item.pontuacao_acumulada,
+              };
+            }
           })
         );
 
-        // Ordena por pontuação (maior para menor)
+        // Ordena por pontuação decrescente
         rankingComNomes.sort((a, b) => b.pontuacao_acumulada - a.pontuacao_acumulada);
         setRanking(rankingComNomes);
       } catch (err) {
