@@ -25,5 +25,6 @@ export const getUsuarioPorId = async (id: number, token: string) => {
   if (!res.ok) throw new Error("Erro ao buscar usuário");
   return res.json();
 };
-
+// utils/auth.ts
+export const getAuthToken = () => localStorage.getItem("access_token");
 export default authApi;
