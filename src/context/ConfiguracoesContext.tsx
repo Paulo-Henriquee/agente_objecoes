@@ -1,67 +1,50 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import {
-  fetchConfiguracoes,
-  updateConfiguracao,
-  createConfiguracao,
-} from "../services/notasapi";
-
-interface Configuracao {
-  id: number;
-  chave: string;
-  valor: string;
-}
+import React, { createContext, useContext, useState } from "react";
 
 interface ConfiguracoesContextType {
-  configuracoes: Configuracao[];
-  carregando: boolean;
-  editarConfiguracao: (chave: string, valor: string) => Promise<void>;
-  criarConfiguracao: (chave: string, valor: string) => Promise<void>;
+  regras: string[];
+  editarRegra: (index: number, nova: string) => void;
 }
 
-const ConfiguracoesContext = createContext<ConfiguracoesContextType>({
-  configuracoes: [],
-  carregando: true,
-  editarConfiguracao: async () => {},
-  criarConfiguracao: async () => {},
-});
+const regrasIniciais = [
+  "Mantenha seus dados de acesso em sigilo.",
+  "Evite compartilhar seu login com outras pessoas.",
+  "Sempre finalize a sessão após o uso.",
+  "Respeite os níveis de permissão definidos no sistema.",
+  "Revise as informações antes de confirmar qualquer operação.",
+  "Mantenha os dados dos clientes atualizados.",
+  "Utilize senhas fortes e troque-as periodicamente.",
+  "Não altere configurações sem autorização.",
+  "Reportar qualquer falha ou bug imediatamente.",
+  "Evite uso do sistema em redes públicas não confiáveis.",
+  "Utilize navegadores atualizados.",
+  "Evite abrir anexos suspeitos durante o uso.",
+  "Nunca compartilhe prints com dados sensíveis.",
+  "Acompanhe atualizações de funcionalidades.",
+  "Use o suporte apenas por canais oficiais."
+];
 
-export const ConfiguracoesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [configuracoes, setConfiguracoes] = useState<Configuracao[]>([]);
-  const [carregando, setCarregando] = useState(true);
+const ConfiguracoesContext = createContext<ConfiguracoesContextType | undefined>(undefined);
 
-  useEffect(() => {
-    const carregar = async () => {
-      try {
-        const res = await fetchConfiguracoes();
-        setConfiguracoes(res);
-      } catch (err) {
-        console.error("Erro ao carregar configurações:", err);
-      } finally {
-        setCarregando(false);
-      }
-    };
-    carregar();
-  }, []);
+export const ConfiguracoesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [regras, setRegras] = useState<string[]>(regrasIniciais);
 
-  const editarConfiguracao = async (chave: string, valor: string) => {
-    await updateConfiguracao(chave, valor);
-    setConfiguracoes((prev) =>
-      prev.map((c) => (c.chave === chave ? { ...c, valor } : c))
-    );
-  };
-
-  const criarConfiguracao = async (chave: string, valor: string) => {
-    const nova = await createConfiguracao(chave, valor);
-    setConfiguracoes((prev) => [...prev, nova]);
+  const editarRegra = (index: number, nova: string) => {
+    const atualizadas = [...regras];
+    atualizadas[index] = nova;
+    setRegras(atualizadas);
   };
 
   return (
-    <ConfiguracoesContext.Provider
-      value={{ configuracoes, carregando, editarConfiguracao, criarConfiguracao }}
-    >
+    <ConfiguracoesContext.Provider value={{ regras, editarRegra }}>
       {children}
     </ConfiguracoesContext.Provider>
   );
 };
 
-export const useConfiguracoes = () => useContext(ConfiguracoesContext);
+export const useConfiguracoes = () => {
+  const context = useContext(ConfiguracoesContext);
+  if (!context) {
+    throw new Error("useConfiguracoes deve ser usado dentro de um ConfiguracoesProvider");
+  }
+  return context;
+};

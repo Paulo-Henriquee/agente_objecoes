@@ -69,19 +69,13 @@ const Sidebar: React.FC = () => {
             label: "Configurações",
             to: "/configuracoes",
             icon: (isActive: boolean) => (
-              <svg
+              <img
+                src={`https://img.icons8.com/?size=100&id=2969&format=png&color=${
+                  isActive ? "04436E" : "FFFFFF"
+                }`}
+                alt="Configurações"
                 className={iconBaseClass}
-                fill="none"
-                stroke={isActive ? "#04436E" : "white"}
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4v1m0 14v1m8-8h1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.02 0l-.71.71M6.34 17.66l-.71.71"
-                />
-              </svg>
+              />
             ),
           },
         ]

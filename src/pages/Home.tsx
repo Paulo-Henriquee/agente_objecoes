@@ -2,32 +2,12 @@ import React from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
+import { useConfiguracoes } from "../context/ConfiguracoesContext";
 
 const Home: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  const regras = [
-    "Mantenha seus dados de acesso em sigilo.",
-    "Evite compartilhar seu login com outras pessoas.",
-    "Sempre finalize a sessão após o uso.",
-    "Respeite os níveis de permissão definidos no sistema.",
-    "Revise as informações antes de confirmar qualquer operação.",
-    "Mantenha os dados dos clientes atualizados.",
-    "Utilize senhas fortes e troque-as periodicamente.",
-    "Não altere configurações sem autorização.",
-    "Reportar qualquer falha ou bug imediatamente.",
-    "Evite uso do sistema em redes públicas não confiáveis.",
-    "Utilize navegadores atualizados.",
-    "Evite abrir anexos suspeitos durante o uso.",
-    "Nunca compartilhe prints com dados sensíveis.",
-    "Acompanhe atualizações de funcionalidades.",
-    "Use o suporte apenas por canais oficiais."
-  ];
-
-  const handleIniciar = () => {
-    navigate("/chat");
-  };
+  const { regras } = useConfiguracoes();
 
   const blocos = [regras.slice(0, 5), regras.slice(5, 10), regras.slice(10, 15)];
 
@@ -64,7 +44,7 @@ const Home: React.FC = () => {
 
           <div className="flex justify-center mt-4">
             <button
-              onClick={handleIniciar}
+              onClick={() => navigate("/chat")}
               className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
             >
               INICIAR
