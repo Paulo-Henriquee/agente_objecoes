@@ -1,27 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import fundo from "../assets/fundo.png";
+import { getRanking } from "../services/scoreapi";
+import { getUsuarioPorId } from "../services/api";
 
-const rankings = [
-  { pos: "1°", nome: "VENDEDOR1", score: 98 },
-  { pos: "2°", nome: "VENDEDOR2", score: 94 },
-  { pos: "3°", nome: "VENDEDOR3", score: 91 },
-  { pos: "4°", nome: "VENDEDOR4", score: 87 },
-  { pos: "5°", nome: "VENDEDOR5", score: 85 },
-  { pos: "6°", nome: "VENDEDOR6", score: 83 },
-  { pos: "7°", nome: "VENDEDOR7", score: 81 },
-  { pos: "8°", nome: "VENDEDOR8", score: 79 },
-  { pos: "9°", nome: "VENDEDOR9", score: 77 },
-  { pos: "10°", nome: "VENDEDOR10", score: 75 },
-];
+interface Vendedor {
+  id_usuario: number;
+  nome: string;
+  pontuacao_acumulada: number;
+}
 
 const getColorByPosition = (index: number) => {
-  if (index === 0) return "bg-cyan-500 text-cyan-900 font-bold";      // Diamante
-  if (index === 1) return "bg-yellow-400 text-yellow-900 font-bold";  // Ouro (mais viva)
-  if (index === 2) return "bg-gray-400 text-gray-900 font-bold";      // Prata
-  return "bg-yellow-700 text-yellow-100";                               // Bronze (mais apagado)
+  if (index === 0) return "bg-cyan-500 text-cyan-900 font-bold";
+  if (index === 1) return "bg-yellow-400 text-yellow-900 font-bold";
+  if (index === 2) return "bg-gray-400 text-gray-900 font-bold";
+  return "bg-yellow-700 text-yellow-100";
 };
 
 const Rank: React.FC = () => {
+  const [ranking, setRanking] = useState<Vendedor[]>([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    getRanking(token).then(async (rankData) => {
+      const users: Vendedor[] = await Promise.all(
+        rankData.map(async (item: any) => {
+          const user = await getUsuarioPorId(item.id_usuario, token);
+          return {
+            id_usuario: item.id_usuario,
+            nome: user.nome,
+            pontuacao_acumulada: item.pontuacao_acumulada,
+          };
+        })
+      );
+      users.sort((a, b) => b.pontuacao_acumulada - a.pontuacao_acumulada);
+      setRanking(users);
+    });
+  }, []);
+
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 sm:px-6 md:px-8"
@@ -42,14 +59,14 @@ const Rank: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {rankings.map((vendedor, index) => (
+              {ranking.map((vendedor, index) => (
                 <tr
-                  key={index}
+                  key={vendedor.id_usuario}
                   className={`rounded-xl ${getColorByPosition(index)} text-sm md:text-base text-center`}
                 >
-                  <td className="px-4 py-2 rounded-l-xl">{vendedor.pos}</td>
+                  <td className="px-4 py-2 rounded-l-xl">{index + 1}°</td>
                   <td className="px-4 py-2">{vendedor.nome}</td>
-                  <td className="px-4 py-2 rounded-r-xl">{vendedor.score}</td>
+                  <td className="px-4 py-2 rounded-r-xl">{vendedor.pontuacao_acumulada}</td>
                 </tr>
               ))}
             </tbody>
