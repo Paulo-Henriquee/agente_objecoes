@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import DificuldadeModal from "../components/DificuldadeModal";
 import ModalFinal from "../components/ModalFinal";
 import { useNavigate } from "react-router-dom";
+import fundo from "../assets/fundo.png";
 
 interface Mensagem {
   texto: string;
@@ -89,7 +90,7 @@ const AgenteObjecoes: React.FC = () => {
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 py-4"
-      style={{ backgroundImage: `url('/src/assets/fundo.png')` }}
+      style={{ backgroundImage: `url(${fundo})` }}
     >
       <div className="bg-black/60 text-white rounded-xl p-6 max-w-4xl w-full flex flex-col">
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">

@@ -1,4 +1,5 @@
 import React from "react";
+import fundo from "../assets/fundo.png";
 
 const rankings = [
   { pos: "1°", nome: "VENDEDOR1", score: 98 },
@@ -24,7 +25,7 @@ const Rank: React.FC = () => {
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 sm:px-6 md:px-8"
-      style={{ backgroundImage: `url('/src/assets/fundo.png')` }}
+      style={{ backgroundImage: `url(${fundo})` }}
     >
       <div className="bg-black/60 text-white rounded-xl p-6 w-full max-w-4xl mx-auto">
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-8">

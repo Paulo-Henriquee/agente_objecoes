@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import fundo from "../assets/fundo.png";
 
 interface Mensagem {
   texto: string;
@@ -44,7 +45,7 @@ const Duvidas: React.FC = () => {
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 py-4"
-      style={{ backgroundImage: `url('/src/assets/fundo.png')` }}
+      style={{ backgroundImage: `url(${fundo})` }}
     >
       <div className="bg-black/60 text-white rounded-xl p-6 max-w-6xl w-full flex flex-col">
         {/* Título */}
