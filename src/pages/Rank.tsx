@@ -14,10 +14,10 @@ const rankings = [
 ];
 
 const getColorByPosition = (index: number) => {
-  if (index === 0) return "bg-cyan-300 text-cyan-900 font-bold";      // Diamante
+  if (index === 0) return "bg-cyan-500 text-cyan-900 font-bold";      // Diamante
   if (index === 1) return "bg-yellow-400 text-yellow-900 font-bold";  // Ouro (mais viva)
-  if (index === 2) return "bg-gray-300 text-gray-900 font-bold";      // Prata
-  return "bg-amber-200 text-amber-900";                               // Bronze (mais apagado)
+  if (index === 2) return "bg-gray-400 text-gray-900 font-bold";      // Prata
+  return "bg-yellow-700 text-yellow-100";                               // Bronze (mais apagado)
 };
 
 const Rank: React.FC = () => {
