@@ -1,13 +1,23 @@
-// services/scoreapi.ts
-const SCORE_BASE_URL = "https://scoreapi.healthsafetytech.com";
+import axios from "axios";
+
+const scoreApi = axios.create({
+  baseURL: "https://scoreapi.healthsafetytech.com",  // ✅ HTTPS garantido
+});
+
+scoreApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access_token");
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const getRanking = async (token: string) => {
-  const res = await fetch(`${SCORE_BASE_URL}/ranking`, {
+  const response = await scoreApi.get("/ranking", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!res.ok) throw new Error("Erro ao buscar ranking");
-  return res.json();
+  return response.data;
 };

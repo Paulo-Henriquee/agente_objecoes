@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import fundo from "../assets/fundo.png";
-import { getRanking } from "../services/scoreapi";  
-import { getUsuarioPorId } from "../services/api";
-import { getAuthToken } from "../services/api";
+import { getRanking } from "../services/scoreapi";
+import { getUsuarioPorId, getAuthToken } from "../services/api";
 
 interface Vendedor {
   id_usuario: number;
@@ -24,12 +23,25 @@ const Rank: React.FC = () => {
     (async () => {
       console.log("Rank useEffect iniciou.");
       const token = getAuthToken();
-      console.log("Token:", token);
       if (!token) return;
 
       try {
         const result = await getRanking(token);
-        console.log("Resultado do ranking:", result);
+
+        const rankingComNomes: Vendedor[] = await Promise.all(
+          result.map(async (item: any) => {
+            const user = await getUsuarioPorId(item.id_usuario, token);
+            return {
+              id_usuario: item.id_usuario,
+              nome: user.nome,
+              pontuacao_acumulada: item.pontuacao_acumulada
+            };
+          })
+        );
+
+        // Ordena por pontuação (maior para menor)
+        rankingComNomes.sort((a, b) => b.pontuacao_acumulada - a.pontuacao_acumulada);
+        setRanking(rankingComNomes);
       } catch (err) {
         console.error("Erro ao buscar ranking:", err);
       }
