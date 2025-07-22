@@ -14,31 +14,32 @@ const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-cover bg-center px-4"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-cover bg-center"
       style={{ backgroundImage: `url(${fundo})` }}
     >
-      {/* camada escura por cima do fundo */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" />
+      {/* Camada escura + blur */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
-      <div className="bg-white p-6 rounded-xl w-full max-w-md text-center shadow-lg z-10">
-        <h2 className="text-xl font-bold mb-2 text-blue-800">
+      {/* Modal central */}
+      <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl px-6 py-6 w-full max-w-md mx-4 text-white shadow-lg">
+        <h2 className="text-2xl font-bold mb-2 text-blue-300 text-center">
           Treinamento de Objeções
         </h2>
-        <p className="mb-4 text-sm text-gray-700">
+        <p className="mb-4 text-sm text-white text-center">
           Defina a dificuldade desejada e inicie seu teste.
         </p>
 
         <div className="flex flex-col gap-2 mb-6">
-          <span className="text-sm text-gray-600 font-semibold">
+          <span className="text-sm font-semibold text-blue-200 text-center">
             Dificuldade:
           </span>
           {niveis.map((nivel) => (
             <label
               key={nivel}
-              className={`border rounded-lg px-4 py-2 cursor-pointer transition ${
+              className={`border rounded-lg px-4 py-2 cursor-pointer transition text-center ${
                 nivelSelecionado === nivel
-                  ? "bg-blue-100 border-blue-500 text-blue-700 font-bold"
-                  : "bg-white border-gray-300 text-gray-800"
+                  ? "bg-blue-600 border-blue-400 text-white font-bold"
+                  : "bg-white/10 border-white/20 text-white"
               }`}
             >
               <input
@@ -54,18 +55,16 @@ const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
           ))}
         </div>
 
-        {/* Botões lado a lado */}
         <div className="flex justify-between gap-4">
           <button
             onClick={() => navigate("/")}
-            className="w-1/2 text-blue-700 border border-blue-700 px-4 py-2 rounded-full hover:bg-blue-50 transition"
+            className="w-1/2 border border-blue-400 text-blue-200 px-4 py-2 rounded-lg hover:bg-blue-800 transition"
           >
-            Voltar ao Início
+            Voltar
           </button>
-
           <button
             onClick={() => onStart(nivelSelecionado)}
-            className="w-1/2 bg-blue-700 text-white px-4 py-2 rounded-full hover:bg-blue-800 transition"
+            className="w-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             Iniciar
           </button>

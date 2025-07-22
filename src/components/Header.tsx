@@ -1,16 +1,16 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 
+type MenuItem = { to: string; label: string };
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const [menuAberto, setMenuAberto] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  // Não exibe Header na página de login
   if (location.pathname === "/login") return null;
 
   const handleLogout = () => {
@@ -18,17 +18,41 @@ const Header: React.FC = () => {
     navigate("/login");
   };
 
+  useEffect(() => {
+    const handleClickFora = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuAberto(false);
+      }
+    };
+
+    if (menuAberto) {
+      document.addEventListener("mousedown", handleClickFora);
+    } else {
+      document.removeEventListener("mousedown", handleClickFora);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickFora);
+    };
+  }, [menuAberto]);
+
+  const menuItems: (MenuItem | false)[] = [
+    { to: "/inicio", label: "Início" },
+    { to: "/chat", label: "Chat" },
+    { to: "/rank", label: "Rank" },
+    { to: "/duvidas", label: "Dúvidas" },
+    user?.role === "admin" && { to: "/configuracoes", label: "Configurações" },
+  ];
+
   return (
-    <header className="bg-white shadow flex items-center justify-between px-4 py-3">
+    <header className="relative z-50 bg-white/80 backdrop-blur-md shadow flex items-center justify-between px-4 py-3 w-full">
       <div className="flex items-center gap-4">
-        {/* Botão de menu visível só no mobile */}
         <button
           onClick={() => setMenuAberto(!menuAberto)}
           className="block lg:hidden text-gray-700 focus:outline-none"
         >
           ☰
         </button>
-
         <span className="font-bold text-xl text-blue-700">HealthScore</span>
       </div>
 
@@ -44,19 +68,23 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-      {/* Sidebar mobile flutuante */}
       {menuAberto && (
-        <div className="absolute top-16 left-0 w-64 bg-white shadow-lg z-50 p-4 lg:hidden">
-          <nav className="flex flex-col space-y-2">
-            <Link to="/inicio" className="text-gray-700 font-medium">Início</Link>
-            <Link to="/dashboard" className="text-gray-700 font-medium">Dashboard</Link>
-            <Link to="/vendas" className="text-gray-700 font-medium">Rank</Link>
-            <Link to="/servicos" className="text-gray-700 font-medium">Duvidas</Link>
-
-            {user?.role === "admin" && (
-              <Link to="/configuracoes" className="text-gray-700 font-medium">Configurações</Link>
-            )}
-          </nav>
+        <div
+          ref={menuRef}
+          className="absolute left-0 top-full w-full bg-white shadow-md py-3 px-4 flex flex-col items-center gap-2 z-50"
+        >
+          {menuItems
+            .filter((item): item is MenuItem => Boolean(item))
+            .map((item, i) => (
+              <Link
+                key={i}
+                to={item.to}
+                onClick={() => setMenuAberto(false)}
+                className="text-center bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition w-40"
+              >
+                {item.label}
+              </Link>
+            ))}
         </div>
       )}
     </header>

@@ -37,7 +37,7 @@ const ConfiguracoesRegras: React.FC = () => {
 
   return (
     <div
-      className="h-full w-full flex items-center justify-center bg-cover bg-center"
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
       style={{ backgroundImage: `url(${fundo})` }}
     >
       <div className="bg-black/60 text-white rounded-xl p-6 max-w-6xl w-full">
@@ -48,7 +48,7 @@ const ConfiguracoesRegras: React.FC = () => {
           {blocos.map((bloco, colIndex) => (
             <div
               key={colIndex}
-              className="bg-white/20 backdrop-blur-md rounded-xl p-4 flex-1 space-y-4 min-w-0 min-h-[340px]"
+              className="bg-white/20 backdrop-blur-md rounded-xl p-4 flex-1 space-y-4 min-w-0"
             >
               {bloco.map((regra, index) => {
                 const regraIndex = colIndex * 5 + index;
