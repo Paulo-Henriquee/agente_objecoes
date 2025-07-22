@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import fundo from "../assets/fundo.png";
-import { getRanking } from "../services/scoreapi";
-import { getUsuarioPorId, getAuthToken } from "../services/api";
-
-interface Vendedor {
-  id_usuario: number;
-  nome: string;
-  pontuacao_acumulada: number;
-}
+import { useRanking } from "../context/RankingContext";
 
 const getColorByPosition = (index: number) => {
   if (index === 0) return "bg-cyan-500 text-cyan-900 font-bold";
@@ -16,47 +9,17 @@ const getColorByPosition = (index: number) => {
   return "bg-yellow-700 text-yellow-100";
 };
 
+
 const Rank: React.FC = () => {
-  const [ranking, setRanking] = useState<Vendedor[]>([]);
+  const { ranking, loading } = useRanking();
 
-  useEffect(() => {
-    (async () => {
-      console.log("Rank useEffect iniciou.");
-
-      const token = getAuthToken();
-      if (!token) return;
-
-      try {
-        const result = await getRanking(token);
-
-        const rankingComNomes: Vendedor[] = await Promise.all(
-          result.map(async (item: any) => {
-            try {
-              const user = await getUsuarioPorId(item.id_usuario); // 🔄 token removido
-              return {
-                id_usuario: item.id_usuario,
-                nome: user.username,
-                pontuacao_acumulada: item.pontuacao_acumulada,
-              };
-            } catch (err) {
-              console.warn(`Usuário ${item.id_usuario} não encontrado.`);
-              return {
-                id_usuario: item.id_usuario,
-                nome: "Desconhecido",
-                pontuacao_acumulada: item.pontuacao_acumulada,
-              };
-            }
-          })
-        );
-
-        // Ordena por pontuação decrescente
-        rankingComNomes.sort((a, b) => b.pontuacao_acumulada - a.pontuacao_acumulada);
-        setRanking(rankingComNomes);
-      } catch (err) {
-        console.error("Erro ao buscar ranking:", err);
-      }
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <div className="text-white text-center mt-10">
+        Carregando ranking...
+      </div>
+    );
+  }
 
   return (
     <div
@@ -84,7 +47,7 @@ const Rank: React.FC = () => {
                   className={`rounded-xl ${getColorByPosition(index)} text-sm md:text-base text-center`}
                 >
                   <td className="px-4 py-2 rounded-l-xl">{index + 1}°</td>
-                  <td className="px-4 py-2">{vendedor.nome}</td>
+                  <td className="px-4 py-2">{vendedor.username}</td>
                   <td className="px-4 py-2 rounded-r-xl">{vendedor.pontuacao_acumulada}</td>
                 </tr>
               ))}

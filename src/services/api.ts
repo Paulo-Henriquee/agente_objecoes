@@ -19,7 +19,7 @@ authApi.interceptors.request.use(
 );
 
 // Busca o usuário pelo ID usando a instância do axios
-export const getUsuarioPorId = async (id: number): Promise<{ nome: string }> => {
+export const getUsuarioPorId = async (id: number): Promise<{ username: string }> => {
   const response = await authApi.get(`/users/${id}`);
   return response.data;
 };
