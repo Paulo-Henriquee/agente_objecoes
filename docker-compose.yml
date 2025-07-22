@@ -19,6 +19,29 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`localhost`)" # ajuste conforme seu domínio
       - "traefik.http.routers.app.entrypoints=web"
-      - "traefik.http.services.app.loadbalancer.server.port=80"
+      - "traefik.http.services.app.loadbalancer.server.port=24"
     expose:
-      - "80"
+      - "24"
+
+  backend:
+    build:
+      context: ./backend       # a pasta que você vai criar
+      dockerfile: Dockerfile   # crie um Dockerfile simples lá dentro
+    env_file:
+      - ./.env
+    # ou, alternativamente:
+    # environment:
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    labels:
+      - "traefik.enable=true"
+      # aqui você pode usar sub-domínio ou path; ex. api.localhost
+      - "traefik.http.routers.backend.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.services.backend.loadbalancer.server.port=1010"
+    expose:
+      - "1010"
+    depends_on:
+      - traefik                # opcional, só pra deixar claro a ordem
+
+  # volumes, networks, etc, se quiser trazer Postgres, Redis etc.
+
