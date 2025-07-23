@@ -37,7 +37,7 @@ const Duvidas: React.FC = () => {
       const usuario_id = String(user.id);
 
       const response = await axios.post(
-        "https://scoreapi.healthsafetytech.com/chat?prompt=nina",
+        "https://scoreapi.healthsafetytech.com/chat/historico?prompt=nina",
         {
           mensagem: mensagem.trim(),
           historico: historicoFormatado,
@@ -82,6 +82,42 @@ const Duvidas: React.FC = () => {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [mensagens, digitandoIA]);
+
+  useEffect(() => {
+    const carregarHistorico = async () => {
+      if (mensagens.length > 0) return;
+
+      try {
+        const token = getAuthToken();
+        if (!token) return;
+
+        const user = await getUsuarioAtual(token);
+        const usuario_id = user.id;
+
+        const response = await axios.get(
+          `https://scoreapi.healthsafetytech.com/chat/historico/${usuario_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (Array.isArray(response.data)) {
+          const mensagensConvertidas = response.data.map((m: any) => ({
+            tipo: m.tipo,
+            texto: m.conteudo,
+          }));
+
+          setMensagens(mensagensConvertidas);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar histórico:", err);
+      }
+    };
+
+    carregarHistorico();
+  }, []);
 
   return (
     <div
