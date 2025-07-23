@@ -24,6 +24,16 @@ export const getUsuarioPorId = async (id: number): Promise<{ username: string }>
   return response.data;
 };
 
+// Busca o ID do usuário atual usando a instância do axios
+export const getUsuarioAtual = async (token: string): Promise<{ id: string }> => {
+  const response = await authApi.get("/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 // Utilitário para obter token
 export const getAuthToken = () => localStorage.getItem("access_token");
 

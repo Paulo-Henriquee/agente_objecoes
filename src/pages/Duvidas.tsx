@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import fundo from "../assets/fundo.png";
+import axios from "axios"; // certifique-se de ter instalado
+import { getAuthToken, getUsuarioAtual } from "../services/api";
 
 interface Mensagem {
   texto: string;
@@ -12,21 +14,59 @@ const Duvidas: React.FC = () => {
   const [digitandoIA, setDigitandoIA] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const handleEnviar = () => {
+  const handleEnviar = async () => {
     if (!mensagem.trim()) return;
 
     const novaMensagem: Mensagem = { texto: mensagem.trim(), tipo: "user" };
+    const historicoFormatado = mensagens.map((m) => ({
+      tipo: m.tipo,
+      conteudo: m.texto,
+    }));
+
     setMensagens((prev) => [...prev, novaMensagem]);
     setMensagem("");
     setDigitandoIA(true);
 
-    setTimeout(() => {
-      setDigitandoIA(false);
+    try {
+      const token = getAuthToken();
+      if (!token) throw new Error("Token não encontrado.");
+
+      // ✅ Buscar o ID real via /me
+      const user = await getUsuarioAtual(token);
+      const usuario_id = String(user.id);
+
+      const response = await axios.post(
+        "https://scoreapi.healthsafetytech.com/chat?prompt=nina",
+        {
+          mensagem: mensagem.trim(),
+          historico: historicoFormatado,
+          usuario_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const respostaIA = response.data.resposta;
+
       setMensagens((prev) => [
         ...prev,
-        { texto: "Claro! Aqui está uma resposta da Nina, sua assistente virtual.", tipo: "ia" },
+        { texto: respostaIA, tipo: "ia" },
       ]);
-    }, 1000);
+    } catch (err) {
+      console.error("Erro ao falar com a IA:", err);
+      setMensagens((prev) => [
+        ...prev,
+        {
+          texto: "⚠️ Erro ao se conectar com a assistente. Verifique seu login.",
+          tipo: "ia",
+        },
+      ]);
+    } finally {
+      setDigitandoIA(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
