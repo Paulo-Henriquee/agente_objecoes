@@ -4,14 +4,13 @@ import "./styles/index.css";
 import AppRoutes from "./router";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import fundo from "./assets/fundo.png"; // adicione isso
 
-// Rotas onde não deve ter layout (Header/Sidebar)
 const noLayoutRoutes = ["/login", "/chat"];
 
 const App: React.FC = () => {
   const location = useLocation();
 
-  // Aceita rota exata ou subrotas como /chat/nivel
   const hideLayout = noLayoutRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -21,8 +20,17 @@ const App: React.FC = () => {
       {!hideLayout && <Header />}
       <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
         {!hideLayout && <Sidebar />}
-        <main className="flex-1 overflow-auto">
-          <AppRoutes />
+
+        {/* Aqui o fundo é aplicado ao main inteiro */}
+        <main
+          className="flex-1 overflow-auto relative bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${fundo})`,
+          }}
+        >
+          <div className="relative z-10 h-full w-full flex flex-col">
+            <AppRoutes />
+          </div>
         </main>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useConfiguracoes } from "../context/ConfiguracoesContext";
-import fundo from "../assets/fundo.png";
 
 const ConfiguracoesRegras: React.FC = () => {
   const { user } = useAuth();
@@ -36,11 +35,8 @@ const ConfiguracoesRegras: React.FC = () => {
   const blocos = [regras.slice(0, 5), regras.slice(5, 10), regras.slice(10, 15)];
 
   return (
-    <div
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
-      style={{ backgroundImage: `url(${fundo})` }}
-    >
-      <div className="bg-black/60 text-white rounded-xl p-6 max-w-6xl w-full">
+    <div className="flex-1 flex items-center justify-center">
+      <div className="bg-black/40 text-white rounded-xl p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto m-4">
         <h1 className="text-3xl font-bold mb-2">Configurações</h1>
         <p className="mb-6">Edite rapidamente as regras de uso do sistema.</p>
 

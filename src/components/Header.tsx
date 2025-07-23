@@ -53,12 +53,20 @@ const Header: React.FC = () => {
         >
           ☰
         </button>
-        <span className="font-bold text-xl text-blue-700">HealthScore</span>
+
+        {/* Link para a home (/inicio) */}
+        <Link
+          to="/inicio"
+          className="font-bold text-xl text-blue-700 transition-transform duration-200 hover:scale-105 no-underline"
+        >
+          HealthScore
+        </Link>
       </div>
 
       <div className="flex items-center gap-4 text-sm">
         <span className="text-gray-700 max-w-[160px] truncate">
-          {user?.username} <span className="text-xs text-gray-400">({user?.role})</span>
+          {user?.username}{" "}
+          <span className="text-xs text-gray-400">({user?.role})</span>
         </span>
         <button
           onClick={handleLogout}

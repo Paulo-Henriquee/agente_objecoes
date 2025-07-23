@@ -45,34 +45,52 @@ const Login: React.FC = () => {
 
         {/* Formulário */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={loading}
-            placeholder="Usuário"
-            autoComplete="username"
-            required
-            className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          {/* Campo Usuário com ícone */}
+          <div className="flex items-center px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus-within:ring-2 focus-within:ring-blue-500">
+            <img
+              src="https://img.icons8.com/?size=100&id=98957&format=png&color=000000"
+              alt="User Icon"
+              className="w-5 h-5 mr-3 filter invert"
+            />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={loading}
+              placeholder="Usuário"
+              autoComplete="username"
+              required
+              className="flex-1 bg-transparent text-white placeholder:text-white/60 focus:outline-none"
+            />
+          </div>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-            placeholder="Senha"
-            autoComplete="current-password"
-            required
-            className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          {/* Campo Senha com ícone */}
+          <div className="flex items-center px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus-within:ring-2 focus-within:ring-blue-500">
+            <img
+              src="https://img.icons8.com/?size=100&id=64776&format=png&color=000000"
+              alt="Password Icon"
+              className="w-5 h-5 mr-3 filter invert"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              placeholder="Senha"
+              autoComplete="current-password"
+              required
+              className="flex-1 bg-transparent text-white placeholder:text-white/60 focus:outline-none"
+            />
+          </div>
 
+          {/* Erro */}
           {error && (
             <div className="text-sm text-red-400 text-center bg-red-900/20 p-3 rounded-lg border border-red-400/40">
               {error}
             </div>
           )}
 
+          {/* Botão */}
           <button
             type="submit"
             disabled={loading}
