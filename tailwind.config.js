@@ -11,6 +11,15 @@ module.exports = {
           DEFAULT: "#2563eb",
         },
       },
+      keyframes: {
+        blinkBlue: {
+          '0%, 100%': { color: '#3B82F6' },   // azul-500
+          '50%': { color: '#60A5FA' }         // azul-400
+        },
+      },
+      animation: {
+        blinkBlue: 'blinkBlue 1.5s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
