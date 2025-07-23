@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import fundo from "../assets/fundo.png";
 import axios from "axios"; // certifique-se de ter instalado
 import { getAuthToken, getUsuarioAtual } from "../services/api";
+import { useDuvida } from "../context/DuvidaContext";
 
 interface Mensagem {
   texto: string;
@@ -10,7 +11,7 @@ interface Mensagem {
 
 const Duvidas: React.FC = () => {
   const [mensagem, setMensagem] = useState("");
-  const [mensagens, setMensagens] = useState<Mensagem[]>([]);
+  const {mensagens, setMensagens} = useDuvida();
   const [digitandoIA, setDigitandoIA] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
