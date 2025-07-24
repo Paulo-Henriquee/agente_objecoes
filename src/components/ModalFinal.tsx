@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/HS2.ico";
 
 const ModalFinal: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,14 @@ const ModalFinal: React.FC = () => {
 
       {/* Modal final */}
       <div className="relative z-10 bg-white/30 backdrop-blur-md rounded-xl px-6 py-6 w-full max-w-md mx-4 text-white shadow-lg text-center">
+        <div className="flex justify-center mb-4">
+          <img
+            src={logo}
+            alt="Logo Health Safety"
+            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
+          />
+        </div>
+
         <h2 className="text-2xl font-bold mb-2 animate-blinkBlue">
           Teste Finalizado!
         </h2>

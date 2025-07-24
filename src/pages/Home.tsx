@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useConfiguracoes } from "../context/ConfiguracoesContext";
+import logo from "../assets/HS2.ico";
 
 const Home: React.FC = () => {
   const { user } = useAuth();
@@ -13,7 +14,15 @@ const Home: React.FC = () => {
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="bg-black/40 text-white rounded-xl p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto m-4">
-        <h1 className="text-3xl font-bold mb-2">Início</h1>
+        <div className="flex items-center gap-3 mb-2">
+          <img
+            src={logo}
+            alt="Logo Health Safety"
+            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+          />
+          <h1 className="text-3xl font-bold">Início</h1>
+        </div>
+
         <p className="mb-6">
           Seja bem-vindo ao sistema HealthScore,{" "}
           <span className="font-semibold">{user?.username}</span>!

@@ -5,6 +5,7 @@ import DificuldadeModal from "../components/DificuldadeModal";
 import ModalFinal from "../components/ModalFinal";
 import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
+import logo from "../assets/HS2.ico"; // 
 
 interface Mensagem {
   texto: string;
@@ -29,7 +30,7 @@ const AgenteObjecoes: React.FC = () => {
   const [respostasUsuarioHistorico, setRespostasUsuarioHistorico] = useState<string[]>([]);
   const [pontuacoes, setPontuacoes] = useState<number[]>([]);
   const [feedbacks, setFeedbacks] = useState<string[]>([]);
-  const [setor, setSetor] = useState("geral"); // altere se quiser setor dinâmico
+  const [setor, setSetor] = useState("geral");
 
   useEffect(() => {
     if (chatRef.current) {
@@ -71,13 +72,8 @@ const AgenteObjecoes: React.FC = () => {
     return match ? parseInt(match[1], 10) : 0;
   };
 
-  const ehFeedback = (texto: string) => {
-    return texto.includes("**Avaliação por critério:**");
-  };
-
-  const ehObjeção = (texto: string) => {
-    return texto.includes("**Objeção");
-  };
+  const ehFeedback = (texto: string) => texto.includes("**Avaliação por critério:**");
+  const ehObjeção = (texto: string) => texto.includes("**Objeção");
 
   const enviarMensagemParaIA = async (mensagemTexto: string) => {
     try {
@@ -102,26 +98,20 @@ const AgenteObjecoes: React.FC = () => {
           usuario_id,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       const respostaIA = response.data.resposta;
 
-      // Verifica se é feedback
       if (ehFeedback(respostaIA)) {
         const nota = extrairNota(respostaIA);
         setPontuacoes((prev) => [...prev, nota]);
         setFeedbacks((prev) => [...prev, respostaIA]);
       }
 
-      // Verifica se é objeção
       if (ehObjeção(respostaIA)) {
         setMensagensIa((prev) => [...prev, respostaIA]);
-
-        // Salva no banco de objeções
         await axios.post(
           "https://scoreapi.healthsafetytech.com/objeções/registrar",
           {
@@ -129,21 +119,14 @@ const AgenteObjecoes: React.FC = () => {
             setor,
             mensagem_ia: respostaIA,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
       }
 
       setMensagens((prev) => [...prev, { texto: respostaIA, tipo: "ia" }]);
 
-      // Chegou na rodada 10?
       if (pontuacoes.length + 1 >= 10) {
         setTesteFinalizado(true);
-
-        // Salvar histórico
         await axios.post(
           "https://scoreapi.healthsafetytech.com/historico/",
           {
@@ -153,35 +136,20 @@ const AgenteObjecoes: React.FC = () => {
             pontuacoes: [...pontuacoes, extrairNota(respostaIA)],
             feedbacks: [...feedbacks, respostaIA],
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // Finalizar simulação
         const pontuacaoTotal = [...pontuacoes, extrairNota(respostaIA)].reduce((acc, val) => acc + val, 0);
 
         await axios.post(
           `https://scoreapi.healthsafetytech.com/simulacoes/${idSimulacao}/finalizar?pontuacao_total=${pontuacaoTotal}`,
           {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
       }
     } catch (err) {
       console.error("Erro ao falar com a IA:", err);
-      setMensagens((prev) => [
-        ...prev,
-        {
-          texto: "⚠️ Erro ao se conectar com a IA.",
-          tipo: "ia",
-        },
-      ]);
+      setMensagens((prev) => [...prev, { texto: "⚠️ Erro ao se conectar com a IA.", tipo: "ia" }]);
     } finally {
       setDigitandoIA(false);
     }
@@ -189,14 +157,12 @@ const AgenteObjecoes: React.FC = () => {
 
   const enviarMensagem = () => {
     if (!mensagem.trim() || bloquearEnvio) return;
-
     const novaMensagem: Mensagem = { texto: mensagem.trim(), tipo: "user" };
     setMensagens((prev) => [...prev, novaMensagem]);
     setRespostasUsuarioHistorico((prev) => [...prev, mensagem.trim()]);
     setMensagem("");
     setDigitandoIA(true);
     setRespostasUsuario((prev) => prev + 1);
-
     enviarMensagemParaIA(mensagem.trim());
   };
 
@@ -232,6 +198,12 @@ const AgenteObjecoes: React.FC = () => {
       style={{ backgroundImage: `url(${fundo})` }}
     >
       <div className="bg-black/60 text-white rounded-xl p-6 max-w-4xl w-full flex flex-col">
+        <img
+          src={logo}
+          alt="Logo Health Safety"
+          className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2"
+        />
+
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
           AGENTE DE OBJEÇÕES - HEALTH SAFETY
         </h1>

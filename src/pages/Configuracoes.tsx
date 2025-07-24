@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useConfiguracoes } from "../context/ConfiguracoesContext";
+import logo from "../assets/HS2.ico";
 
 const ConfiguracoesRegras: React.FC = () => {
   const { user } = useAuth();
@@ -37,9 +38,22 @@ const ConfiguracoesRegras: React.FC = () => {
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="bg-black/40 text-white rounded-xl p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto m-4">
-        <h1 className="text-3xl font-bold mb-2">Configurações</h1>
-        <p className="mb-6">Edite rapidamente as regras de uso do sistema.</p>
+        {/* Logo + Título alinhado à esquerda */}
+        <div className="flex items-center gap-3 flex-wrap mb-2">
+          <img
+            src={logo}
+            alt="Logo Health Safety"
+            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+          />
+          <h1 className="text-3xl font-bold">Configurações</h1>
+        </div>
 
+        {/* Subtítulo alinhado à esquerda */}
+        <p className="mb-6">
+          Edite rapidamente as regras de uso do sistema.
+        </p>
+
+        {/* Blocos de Regras */}
         <div className="flex flex-col lg:flex-row gap-4 w-full">
           {blocos.map((bloco, colIndex) => (
             <div

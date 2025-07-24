@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
+import logo from "../assets/HS2.ico";
 
 interface DificuldadeModalProps {
   onStart: (nivel: string) => void;
@@ -21,15 +22,23 @@ const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Modal central */}
-      <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl px-6 py-6 w-full max-w-md mx-4 text-white shadow-lg">
+      <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl px-6 py-6 w-full max-w-md mx-4 text-white shadow-lg flex flex-col items-center">
+        {/* Logo centralizada acima do título */}
+        <img
+          src={logo}
+          alt="Logo Health Safety"
+          className="w-10 h-10 sm:w-12 sm:h-12 mb-2"
+        />
+
         <h2 className="text-2xl font-bold mb-2 text-blue-300 text-center">
           Treinamento de Objeções
         </h2>
+
         <p className="mb-4 text-sm text-white text-center">
           Defina a dificuldade desejada e inicie seu teste.
         </p>
 
-        <div className="flex flex-col gap-2 mb-6">
+        <div className="flex flex-col gap-2 mb-6 w-full">
           <span className="text-sm font-semibold text-blue-200 text-center">
             Dificuldade:
           </span>
@@ -55,7 +64,7 @@ const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
           ))}
         </div>
 
-        <div className="flex justify-between gap-4">
+        <div className="flex justify-between gap-4 w-full">
           <button
             onClick={() => navigate("/")}
             className="w-1/2 border border-blue-400 text-blue-200 px-4 py-2 rounded-lg hover:bg-blue-800 transition"

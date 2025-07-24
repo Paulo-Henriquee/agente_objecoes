@@ -9,6 +9,23 @@ body,
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Evita rolagem lateral indesejada */
+  overscroll-behavior: contain; /* bloqueia "scroll elástico" no mobile */
+}
+
+/* ─────────── Estilo de seleção para mensagens do usuário (bg-blue-800) ─────────── */
+.bg-blue-800::selection {
+  background-color: #cfe2ff; /* mesmo tom da IA (bg-blue-200) */
+  color: #1e3a8a; /* azul escuro para bom contraste */
+}
+
+.bg-blue-800::-moz-selection {
+  background-color: #cfe2ff;
+  color: #1e3a8a;
+}
+
+.bg-blue-800::-webkit-selection {
+  background-color: #cfe2ff;
+  color: #1e3a8a;
 }
 
 /* ─────────── Ajuste para remover o fundo branco do autofill ─────────── */
@@ -17,12 +34,9 @@ body,
   .no-autofill-bg:-webkit-autofill:hover,
   .no-autofill-bg:-webkit-autofill:focus,
   .no-autofill-bg:-webkit-autofill:active {
-    /* “Apaga” o fundo branco que o navegador injeta */
     -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.05) inset !important;
-    /* Mantém a cor do texto */
     -webkit-text-fill-color: #ffffff !important;
     caret-color: #ffffff;
-    /* Evita flicker durante a transição */
     transition: background-color 600000s 0s, color 600000s 0s;
   }
 }

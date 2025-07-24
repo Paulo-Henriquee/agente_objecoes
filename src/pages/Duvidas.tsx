@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import fundo from "../assets/fundo.png";
+import logo from "../assets/HS2.ico";
 import axios from "axios";
 import { getAuthToken, getUsuarioAtual } from "../services/api";
 import { useDuvida } from "../context/DuvidaContext";
@@ -11,7 +12,7 @@ interface Mensagem {
 
 const Duvidas: React.FC = () => {
   const [mensagem, setMensagem] = useState("");
-  const {mensagens, setMensagens} = useDuvida();
+  const { mensagens, setMensagens } = useDuvida();
   const [digitandoIA, setDigitandoIA] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +33,6 @@ const Duvidas: React.FC = () => {
       const token = getAuthToken();
       if (!token) throw new Error("Token não encontrado.");
 
-      // ✅ Buscar o ID real via /me
       const user = await getUsuarioAtual(token);
       const usuario_id = String(user.id);
 
@@ -125,14 +125,22 @@ const Duvidas: React.FC = () => {
       style={{ backgroundImage: `url(${fundo})` }}
     >
       <div className="bg-black/60 text-white rounded-xl p-6 max-w-6xl w-full flex flex-col">
-        {/* Título */}
-        <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
-          DÚVIDAS - HEALTH SAFETY
-        </h1>
+        {/* Logo acima do título */}
+        <div className="flex flex-col items-center text-center mb-4">
+          <img
+            src={logo}
+            alt="Logo Health Safety"
+            className="w-10 h-10 sm:w-12 sm:h-12 mb-1"
+          />
+          <h1 className="text-2xl md:text-3xl font-bold">
+            DÚVIDAS - HEALTH SAFETY
+          </h1>
+        </div>
 
         {/* Mensagem introdutória */}
         <p className="text-center text-sm md:text-base text-white mb-6">
-          Olá! Eu sou a <strong>Nina</strong>, sua assistente virtual de dúvidas. Estou aqui para te ajudar a encontrar respostas com mais rapidez, clareza e praticidade.
+          Olá! Eu sou a <strong>Nina</strong>, sua assistente virtual de dúvidas.
+          Estou aqui para te ajudar a encontrar respostas com mais rapidez, clareza e praticidade.
         </p>
 
         {/* Chat com rolagem */}
