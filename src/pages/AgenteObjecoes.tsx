@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { getAuthToken, getUsuarioAtual, iniciarSimulacao } from "../services/api";
+import axios from "axios";
 import DificuldadeModal from "../components/DificuldadeModal";
 import ModalFinal from "../components/ModalFinal";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +24,12 @@ const AgenteObjecoes: React.FC = () => {
   const [colorToggle, setColorToggle] = useState(true);
   const chatRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [idSimulacao, setIdSimulacao] = useState<string | null>(null);
+  const [mensagensIa, setMensagensIa] = useState<string[]>([]);
+  const [respostasUsuarioHistorico, setRespostasUsuarioHistorico] = useState<string[]>([]);
+  const [pontuacoes, setPontuacoes] = useState<number[]>([]);
+  const [feedbacks, setFeedbacks] = useState<string[]>([]);
+  const [setor, setSetor] = useState("geral"); // altere se quiser setor dinâmico
 
   useEffect(() => {
     if (chatRef.current) {
@@ -31,7 +39,7 @@ const AgenteObjecoes: React.FC = () => {
 
   useEffect(() => {
     const ultima = mensagens[mensagens.length - 1];
-    if (respostasUsuario >= 4 && ultima?.tipo === "ia" && !showCountdown) {
+    if (respostasUsuario >= 50 && ultima?.tipo === "ia" && !showCountdown) {
       setBloquearEnvio(true);
       setShowCountdown(true);
       setCountdown(10);
@@ -58,22 +66,138 @@ const AgenteObjecoes: React.FC = () => {
     };
   }, [countdown, showCountdown]);
 
+  const extrairNota = (resposta: string): number => {
+    const match = resposta.match(/\*\*Nota final da resposta:\*\*\s?\*\*(\d+)\/10\*\*/);
+    return match ? parseInt(match[1], 10) : 0;
+  };
+
+  const ehFeedback = (texto: string) => {
+    return texto.includes("**Avaliação por critério:**");
+  };
+
+  const ehObjeção = (texto: string) => {
+    return texto.includes("**Objeção");
+  };
+
+  const enviarMensagemParaIA = async (mensagemTexto: string) => {
+    try {
+      const token = getAuthToken();
+      if (!token || !nivel || !idSimulacao) return;
+
+      const user = await getUsuarioAtual(token);
+      const usuario_id = String(user.id);
+
+      const historicoFormatado = mensagens.map((m) => ({
+        tipo: m.tipo,
+        conteudo: m.texto,
+      }));
+
+      const prompt = nivel.toLowerCase();
+
+      const response = await axios.post(
+        `https://scoreapi.healthsafetytech.com/chat?prompt=${prompt}`,
+        {
+          mensagem: mensagemTexto,
+          historico: historicoFormatado,
+          usuario_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const respostaIA = response.data.resposta;
+
+      // Verifica se é feedback
+      if (ehFeedback(respostaIA)) {
+        const nota = extrairNota(respostaIA);
+        setPontuacoes((prev) => [...prev, nota]);
+        setFeedbacks((prev) => [...prev, respostaIA]);
+      }
+
+      // Verifica se é objeção
+      if (ehObjeção(respostaIA)) {
+        setMensagensIa((prev) => [...prev, respostaIA]);
+
+        // Salva no banco de objeções
+        await axios.post(
+          "https://scoreapi.healthsafetytech.com/objeções/registrar",
+          {
+            id_usuario: parseInt(usuario_id),
+            setor,
+            mensagem_ia: respostaIA,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+
+      setMensagens((prev) => [...prev, { texto: respostaIA, tipo: "ia" }]);
+
+      // Chegou na rodada 10?
+      if (pontuacoes.length + 1 >= 10) {
+        setTesteFinalizado(true);
+
+        // Salvar histórico
+        await axios.post(
+          "https://scoreapi.healthsafetytech.com/historico/",
+          {
+            id_simulacao: idSimulacao,
+            mensagens_ia: mensagensIa,
+            respostas_usuario: respostasUsuarioHistorico,
+            pontuacoes: [...pontuacoes, extrairNota(respostaIA)],
+            feedbacks: [...feedbacks, respostaIA],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Finalizar simulação
+        const pontuacaoTotal = [...pontuacoes, extrairNota(respostaIA)].reduce((acc, val) => acc + val, 0);
+
+        await axios.post(
+          `https://scoreapi.healthsafetytech.com/simulacoes/${idSimulacao}/finalizar?pontuacao_total=${pontuacaoTotal}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+    } catch (err) {
+      console.error("Erro ao falar com a IA:", err);
+      setMensagens((prev) => [
+        ...prev,
+        {
+          texto: "⚠️ Erro ao se conectar com a IA.",
+          tipo: "ia",
+        },
+      ]);
+    } finally {
+      setDigitandoIA(false);
+    }
+  };
+
   const enviarMensagem = () => {
     if (!mensagem.trim() || bloquearEnvio) return;
 
     const novaMensagem: Mensagem = { texto: mensagem.trim(), tipo: "user" };
     setMensagens((prev) => [...prev, novaMensagem]);
+    setRespostasUsuarioHistorico((prev) => [...prev, mensagem.trim()]);
     setMensagem("");
     setDigitandoIA(true);
     setRespostasUsuario((prev) => prev + 1);
 
-    setTimeout(() => {
-      setDigitandoIA(false);
-      setMensagens((prev) => [
-        ...prev,
-        { texto: "Resposta simulada da IA aqui...", tipo: "ia" },
-      ]);
-    }, 1000);
+    enviarMensagemParaIA(mensagem.trim());
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -84,7 +208,22 @@ const AgenteObjecoes: React.FC = () => {
   };
 
   if (!nivel) {
-    return <DificuldadeModal onStart={(nivelEscolhido) => setNivel(nivelEscolhido)} />;
+    return (
+      <DificuldadeModal
+        onStart={async (nivelEscolhido) => {
+          try {
+            const token = getAuthToken();
+            if (!token) throw new Error("Token não encontrado.");
+            const usuario = await getUsuarioAtual(token);
+            const simulacao = await iniciarSimulacao(token, String(usuario.id), nivelEscolhido);
+            setIdSimulacao(simulacao.id_simulacao);
+            setNivel(nivelEscolhido);
+          } catch (err) {
+            console.error("Erro ao iniciar simulação:", err);
+          }
+        }}
+      />
+    );
   }
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import fundo from "../assets/fundo.png";
-import axios from "axios"; // certifique-se de ter instalado
+import axios from "axios";
 import { getAuthToken, getUsuarioAtual } from "../services/api";
 import { useDuvida } from "../context/DuvidaContext";
 
@@ -37,7 +37,7 @@ const Duvidas: React.FC = () => {
       const usuario_id = String(user.id);
 
       const response = await axios.post(
-        "https://scoreapi.healthsafetytech.com/chat/historico?prompt=nina",
+        "https://scoreapi.healthsafetytech.com/chat/historico?prompt=nina2",
         {
           mensagem: mensagem.trim(),
           historico: historicoFormatado,
