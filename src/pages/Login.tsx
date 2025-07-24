@@ -21,21 +21,22 @@ const Login: React.FC = () => {
     await login(username, password);
   };
 
+  /** Agora com padding horizontal para evitar conteúdo “cortado” */
+  const baseInputClasses =
+    "flex-1 px-3 bg-transparent no-autofill-bg text-white placeholder:text-white/60 focus:outline-none";
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: `url(${fundo})` }}
     >
-      {/* camada escura com blur */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl px-6 py-6 w-full max-w-md mx-4 text-white shadow-lg">
-        {/* Logo central */}
         <div className="flex justify-center mb-6">
           <img src={logo} alt="Logo" className="max-h-[80px] object-contain" />
         </div>
 
-        {/* Título */}
         <h2 className="text-2xl font-bold mb-2 text-blue-300 text-center">
           Bem-vindo de volta!
         </h2>
@@ -43,9 +44,7 @@ const Login: React.FC = () => {
           Faça login para acessar o sistema.
         </p>
 
-        {/* Formulário */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Campo Usuário com ícone */}
           <div className="flex items-center px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus-within:ring-2 focus-within:ring-blue-500">
             <img
               src="https://img.icons8.com/?size=100&id=98957&format=png&color=000000"
@@ -60,11 +59,10 @@ const Login: React.FC = () => {
               placeholder="Usuário"
               autoComplete="username"
               required
-              className="flex-1 bg-transparent text-white placeholder:text-white/60 focus:outline-none"
+              className={baseInputClasses}
             />
           </div>
 
-          {/* Campo Senha com ícone */}
           <div className="flex items-center px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus-within:ring-2 focus-within:ring-blue-500">
             <img
               src="https://img.icons8.com/?size=100&id=64776&format=png&color=000000"
@@ -79,18 +77,16 @@ const Login: React.FC = () => {
               placeholder="Senha"
               autoComplete="current-password"
               required
-              className="flex-1 bg-transparent text-white placeholder:text-white/60 focus:outline-none"
+              className={baseInputClasses}
             />
           </div>
 
-          {/* Erro */}
           {error && (
             <div className="text-sm text-red-400 text-center bg-red-900/20 p-3 rounded-lg border border-red-400/40">
               {error}
             </div>
           )}
 
-          {/* Botão */}
           <button
             type="submit"
             disabled={loading}

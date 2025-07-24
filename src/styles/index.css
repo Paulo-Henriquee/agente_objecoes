@@ -2,9 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Evita rolagem lateral indesejada */
+}
+
+/* ─────────── Ajuste para remover o fundo branco do autofill ─────────── */
+@layer utilities {
+  .no-autofill-bg:-webkit-autofill,
+  .no-autofill-bg:-webkit-autofill:hover,
+  .no-autofill-bg:-webkit-autofill:focus,
+  .no-autofill-bg:-webkit-autofill:active {
+    /* “Apaga” o fundo branco que o navegador injeta */
+    -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.05) inset !important;
+    /* Mantém a cor do texto */
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #ffffff;
+    /* Evita flicker durante a transição */
+    transition: background-color 600000s 0s, color 600000s 0s;
+  }
 }
