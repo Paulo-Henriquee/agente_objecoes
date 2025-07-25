@@ -37,7 +37,7 @@ const Duvidas: React.FC = () => {
       const usuario_id = String(user.id);
 
       const response = await axios.post(
-        "https://scoreapi.healthsafetytech.com/chat/historico?prompt=nina2",
+        "https://scoreapi.healthsafetytech.com/chat/vetorizado",
         {
           mensagem: mensagem.trim(),
           historico: historicoFormatado,
