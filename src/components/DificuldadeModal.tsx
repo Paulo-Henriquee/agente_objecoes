@@ -7,7 +7,8 @@ interface DificuldadeModalProps {
   onStart: (nivel: string) => void;
 }
 
-const niveis = ["Fácil", "Médio", "Difícil", "Profissional"];
+// Opções de dificuldade sem "Profissional"
+const niveis = ["Fácil", "Médio", "Difícil"];
 
 const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
   const [nivelSelecionado, setNivelSelecionado] = React.useState("Fácil");

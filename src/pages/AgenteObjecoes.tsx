@@ -3,9 +3,10 @@ import { getAuthToken, getUsuarioAtual, iniciarSimulacao } from "../services/api
 import axios from "axios";
 import DificuldadeModal from "../components/DificuldadeModal";
 import ModalFinal from "../components/ModalFinal";
+import ModalConfirmarSaida from "../components/ModalConfirmarSaida";
 import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
-import logo from "../assets/HS2.ico"; // 
+import logo from "../assets/HS2.ico";
 
 interface Mensagem {
   texto: string;
@@ -23,6 +24,7 @@ const AgenteObjecoes: React.FC = () => {
   const [countdown, setCountdown] = useState(10);
   const [testeFinalizado, setTesteFinalizado] = useState(false);
   const [colorToggle, setColorToggle] = useState(true);
+  const [mostrarModalSaida, setMostrarModalSaida] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [idSimulacao, setIdSimulacao] = useState<string | null>(null);
@@ -67,6 +69,54 @@ const AgenteObjecoes: React.FC = () => {
     };
   }, [countdown, showCountdown]);
 
+  // Evitar saída acidental e interceptar botão voltar
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      event.preventDefault();
+      setMostrarModalSaida(true);
+      window.history.pushState(null, "", window.location.pathname);
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = ""; // ativa o alerta nativo
+    };
+
+    window.history.pushState(null, "", window.location.pathname);
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+  if (nivel && mensagens.length === 0) {
+    setDigitandoIA(true);
+
+    let mensagemInicial = "";
+
+    if (nivel === "fácil") {
+      mensagemInicial = setor === "vendas"
+        ? "Vamos começar com uma objeção simples do cliente sobre o preço. Como você responderia?"
+        : "Vamos começar com uma objeção simples. Qual é a dúvida do cliente?";
+    } else if (nivel === "médio") {
+      mensagemInicial = setor === "vendas"
+        ? "Você está em um cenário intermediário de vendas. O cliente está indeciso. Como você reagiria?"
+        : "Estamos em uma simulação intermediária. Apresente a objeção do cliente.";
+    } else {
+      mensagemInicial = setor === "vendas"
+        ? "Desafio avançado! O cliente está prestes a desistir. Como você contorna essa objeção?"
+        : "Prepare-se! Esta é uma objeção desafiadora. Qual é a objeção do cliente?";
+    }
+
+    enviarMensagemParaIA(mensagemInicial);
+  }
+  }, [nivel, setor]);
+
+
   const extrairNota = (resposta: string): number => {
     const match = resposta.match(/\*\*Nota final da resposta:\*\*\s?\*\*(\d+)\/10\*\*/);
     return match ? parseInt(match[1], 10) : 0;
@@ -97,9 +147,7 @@ const AgenteObjecoes: React.FC = () => {
           historico: historicoFormatado,
           usuario_id,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const respostaIA = response.data.resposta;
@@ -156,7 +204,7 @@ const AgenteObjecoes: React.FC = () => {
   };
 
   const enviarMensagem = () => {
-    if (!mensagem.trim() || bloquearEnvio) return;
+    if (!mensagem.trim() || bloquearEnvio || digitandoIA) return;
     const novaMensagem: Mensagem = { texto: mensagem.trim(), tipo: "user" };
     setMensagens((prev) => [...prev, novaMensagem]);
     setRespostasUsuarioHistorico((prev) => [...prev, mensagem.trim()]);
@@ -194,9 +242,23 @@ const AgenteObjecoes: React.FC = () => {
 
   return (
     <div
-      className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 py-4"
+      className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 py-4 relative"
       style={{ backgroundImage: `url(${fundo})` }}
     >
+      {/* Botão de voltar */}
+      <div className="absolute top-4 left-4 z-50 hidden md:flex">
+        <button
+          onClick={() => setMostrarModalSaida(true)}
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md hover:scale-105 transition"
+        >
+          <img
+            src="https://img.icons8.com/?size=100&id=40217&format=png&color=000000"
+            alt="Voltar"
+            className="w-5 h-5"
+          />
+        </button>
+      </div>
+
       <div className="bg-black/60 text-white rounded-xl p-6 max-w-4xl w-full flex flex-col">
         <img
           src={logo}
@@ -268,13 +330,18 @@ const AgenteObjecoes: React.FC = () => {
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={bloquearEnvio}
+            onPaste={(e) => {
+              e.preventDefault();
+              alert("Colar não é permitido.");
+            }}
+            disabled={bloquearEnvio || digitandoIA}
           />
           <button
             onClick={enviarMensagem}
             aria-label="Enviar"
-            disabled={bloquearEnvio}
-            className={`ml-2 p-2 ${bloquearEnvio ? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={bloquearEnvio || digitandoIA}
+            className={`ml-2 p-2 ${bloquearEnvio || digitandoIA ? "opacity-50 cursor-not-allowed" : ""}`}
+
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -289,6 +356,9 @@ const AgenteObjecoes: React.FC = () => {
         </div>
       </div>
 
+      {mostrarModalSaida && (
+        <ModalConfirmarSaida onCancel={() => setMostrarModalSaida(false)} />
+      )}
       {testeFinalizado && <ModalFinal />}
     </div>
   );
