@@ -99,18 +99,12 @@ const AgenteObjecoes: React.FC = () => {
 
     let mensagemInicial = "";
 
-    if (nivel === "fácil") {
-      mensagemInicial = setor === "vendas"
-        ? "Vamos começar com uma objeção simples do cliente sobre o preço. Como você responderia?"
-        : "Vamos começar com uma objeção simples. Qual é a dúvida do cliente?";
-    } else if (nivel === "médio") {
-      mensagemInicial = setor === "vendas"
-        ? "Você está em um cenário intermediário de vendas. O cliente está indeciso. Como você reagiria?"
-        : "Estamos em uma simulação intermediária. Apresente a objeção do cliente.";
+    if (nivel === "Fácil") {
+      mensagemInicial = "Podemos começar, poderia enviar a primeira objeção?";
+    } else if (nivel === "Médio") {
+      mensagemInicial = "Podemos começar, poderia enviar a primeira objeção?";
     } else {
-      mensagemInicial = setor === "vendas"
-        ? "Desafio avançado! O cliente está prestes a desistir. Como você contorna essa objeção?"
-        : "Prepare-se! Esta é uma objeção desafiadora. Qual é a objeção do cliente?";
+      mensagemInicial = "Podemos começar, poderia enviar a primeira objeção?";
     }
 
     enviarMensagemParaIA(mensagemInicial);
@@ -161,14 +155,17 @@ const AgenteObjecoes: React.FC = () => {
 
       if (ehObjeção(respostaIA)) {
         setMensagensIa((prev) => [...prev, respostaIA]);
-        await axios.post(
-          "https://scoreapi.healthsafetytech.com/objeções/registrar",
+        await axios.patch(
+          `https://scoreapi.healthsafetytech.com/objeções/${nivel}`,
+          [
+            {
+              Objeção: respostaIA,
+              setor: setor || "geral"
+            }
+          ],
           {
-            id_usuario: parseInt(usuario_id),
-            setor,
-            mensagem_ia: respostaIA,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
+            headers: { Authorization: `Bearer ${token}` }
+          }
         );
       }
 
@@ -331,10 +328,10 @@ const AgenteObjecoes: React.FC = () => {
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             onKeyDown={handleKeyDown}
-            onPaste={(e) => {
-              e.preventDefault();
-              alert("Colar não é permitido.");
-            }}
+            // onPaste={(e) => {
+            //  e.preventDefault();
+            //  alert("Colar não é permitido.");
+            //}}
             disabled={bloquearEnvio || digitandoIA}
           />
           <button
