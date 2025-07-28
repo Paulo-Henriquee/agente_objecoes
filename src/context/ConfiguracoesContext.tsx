@@ -1,37 +1,51 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getRegras, updateRegra } from "../services/scoreapi";
 
-interface ConfiguracoesContextType {
-  regras: string[];
-  editarRegra: (index: number, nova: string) => void;
+interface Regra {
+  id: number;
+  conteudo: string;
+  ordem: number;
 }
 
-const regrasIniciais = [
-  "Mantenha seus dados de acesso em sigilo.",
-  "Evite compartilhar seu login com outras pessoas.",
-  "Sempre finalize a sessão após o uso.",
-  "Respeite os níveis de permissão definidos no sistema.",
-  "Revise as informações antes de confirmar qualquer operação.",
-  "Mantenha os dados dos clientes atualizados.",
-  "Utilize senhas fortes e troque-as periodicamente.",
-  "Não altere configurações sem autorização.",
-  "Reportar qualquer falha ou bug imediatamente.",
-  "Evite uso do sistema em redes públicas não confiáveis.",
-  "Utilize navegadores atualizados.",
-  "Evite abrir anexos suspeitos durante o uso.",
-  "Nunca compartilhe prints com dados sensíveis.",
-  "Acompanhe atualizações de funcionalidades.",
-  "Use o suporte apenas por canais oficiais."
-];
+interface ConfiguracoesContextType {
+  regras: Regra[];
+  editarRegra: (index: number, nova: string) => Promise<void>;
+}
 
 const ConfiguracoesContext = createContext<ConfiguracoesContextType | undefined>(undefined);
 
 export const ConfiguracoesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [regras, setRegras] = useState<string[]>(regrasIniciais);
+  const [regras, setRegras] = useState<Regra[]>([]);
 
-  const editarRegra = (index: number, nova: string) => {
-    const atualizadas = [...regras];
-    atualizadas[index] = nova;
-    setRegras(atualizadas);
+  useEffect(() => {
+    const fetchRegras = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+      try {
+        const response = await getRegras(token);
+        setRegras(response);
+      } catch (err) {
+        console.error("Erro ao buscar regras:", err);
+      }
+    };
+
+    fetchRegras();
+  }, []);
+
+  const editarRegra = async (index: number, nova: string) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    try {
+      const regra = regras[index];
+      const atualizada = await updateRegra(token, regra.id, nova);
+
+      const novasRegras = [...regras];
+      novasRegras[index] = atualizada;
+      setRegras(novasRegras);
+    } catch (err) {
+      console.error("Erro ao atualizar regra:", err);
+    }
   };
 
   return (

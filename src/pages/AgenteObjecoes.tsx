@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { getAuthToken, getUsuarioAtual, iniciarSimulacao } from "../services/api";
+import { getAuthToken, getUsuarioAtual } from "../services/api";
+import { iniciarSimulacao } from "../services/scoreapi";
 import axios from "axios";
 import DificuldadeModal from "../components/DificuldadeModal";
 import ModalFinal from "../components/ModalFinal";

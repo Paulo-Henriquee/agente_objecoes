@@ -9,7 +9,13 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { regras } = useConfiguracoes();
 
-  const blocos = [regras.slice(0, 5), regras.slice(5, 10), regras.slice(10, 15)];
+  // Ordenar e dividir em 3 blocos
+  const regrasOrdenadas = [...regras].sort((a, b) => a.ordem - b.ordem);
+  const blocos = [
+    regrasOrdenadas.slice(0, 5),
+    regrasOrdenadas.slice(5, 10),
+    regrasOrdenadas.slice(10, 15),
+  ];
 
   return (
     <div className="flex-1 flex items-center justify-center">
@@ -37,10 +43,10 @@ const Home: React.FC = () => {
                 key={i}
                 className="bg-white/20 backdrop-blur-md rounded-xl p-4 w-full lg:w-1/3 space-y-2"
               >
-                {bloco.map((regra, index) => (
-                  <div key={index} className="flex items-start">
+                {bloco.map((regra) => (
+                  <div key={regra.id} className="flex items-start">
                     <span className="mr-2 text-blue-300">→</span>
-                    <span>{regra}</span>
+                    <span>{regra.conteudo}</span>
                   </div>
                 ))}
               </div>

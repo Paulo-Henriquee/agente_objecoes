@@ -12,11 +12,11 @@ const ConfiguracoesRegras: React.FC = () => {
 
   const handleEditar = (index: number) => {
     setEditando(index);
-    setNovaRegra(regras[index]);
+    setNovaRegra(regras[index].conteudo);
   };
 
-  const handleSalvar = (index: number) => {
-    editarRegra(index, novaRegra);
+  const handleSalvar = async (index: number) => {
+    await editarRegra(index, novaRegra);
     setEditando(null);
   };
 
@@ -33,12 +33,18 @@ const ConfiguracoesRegras: React.FC = () => {
     );
   }
 
-  const blocos = [regras.slice(0, 5), regras.slice(5, 10), regras.slice(10, 15)];
+  // Ordena e divide as regras em 3 blocos
+  const regrasOrdenadas = [...regras].sort((a, b) => a.ordem - b.ordem);
+  const blocos = [
+    regrasOrdenadas.slice(0, 5),
+    regrasOrdenadas.slice(5, 10),
+    regrasOrdenadas.slice(10, 15),
+  ];
 
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="bg-black/40 text-white rounded-xl p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto m-4">
-        {/* Logo + Título alinhado à esquerda */}
+        {/* Logo + Título */}
         <div className="flex items-center gap-3 flex-wrap mb-2">
           <img
             src={logo}
@@ -48,12 +54,9 @@ const ConfiguracoesRegras: React.FC = () => {
           <h1 className="text-3xl font-bold">Configurações</h1>
         </div>
 
-        {/* Subtítulo alinhado à esquerda */}
-        <p className="mb-6">
-          Edite rapidamente as regras de uso do sistema.
-        </p>
+        <p className="mb-6">Edite rapidamente as regras de uso do sistema.</p>
 
-        {/* Blocos de Regras */}
+        {/* Blocos de regras */}
         <div className="flex flex-col lg:flex-row gap-4 w-full">
           {blocos.map((bloco, colIndex) => (
             <div
@@ -63,7 +66,7 @@ const ConfiguracoesRegras: React.FC = () => {
               {bloco.map((regra, index) => {
                 const regraIndex = colIndex * 5 + index;
                 return (
-                  <div key={regraIndex} className="flex items-start gap-2">
+                  <div key={regra.id} className="flex items-start gap-2">
                     <span className="text-blue-300 mt-[2px]">→</span>
                     {editando === regraIndex ? (
                       <div className="flex-1 flex flex-col gap-1">
@@ -94,7 +97,7 @@ const ConfiguracoesRegras: React.FC = () => {
                       </div>
                     ) : (
                       <div className="flex justify-between w-full items-center gap-2">
-                        <span className="break-words pr-2 flex-1 max-w-[90%]">{regra}</span>
+                        <span className="break-words pr-2 flex-1 max-w-[90%]">{regra.conteudo}</span>
                         <button
                           onClick={() => handleEditar(regraIndex)}
                           className="text-blue-300 text-xs underline hover:text-white whitespace-nowrap self-center"

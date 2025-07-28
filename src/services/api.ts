@@ -53,23 +53,3 @@ export const getUsername = () => localStorage.getItem("username");
 export const getUserRole = () => localStorage.getItem("role");
 
 export default authApi;
-
-export const iniciarSimulacao = async (
-  token: string,
-  id_usuario: string,
-  dificuldade: string
-) => {
-  const response = await axios.post(
-    "https://scoreapi.healthsafetytech.com/simulacoes",
-    {
-      id_usuario,
-      dificuldade,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return response.data;
-};

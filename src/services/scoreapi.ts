@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const scoreApi = axios.create({
-  baseURL: "https://scoreapi.healthsafetytech.com",  // ✅ HTTPS garantido
+  baseURL: "https://scoreapi.healthsafetytech.com",
 });
 
 scoreApi.interceptors.request.use((config) => {
@@ -18,6 +18,56 @@ export const getRanking = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  return response.data;
+};
+
+export const iniciarSimulacao = async (
+  token: string,
+  id_usuario: string,
+  dificuldade: string
+) => {
+  const response = await axios.post(
+    "https://scoreapi.healthsafetytech.com/simulacoes",
+    {
+      id_usuario,
+      dificuldade,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+// ✅ Buscar todas as regras do sistema
+export const getRegras = async (token: string) => {
+  const response = await scoreApi.get("/regras", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+// ✅ Atualizar o conteúdo de uma regra específica
+export const updateRegra = async (
+  token: string,
+  id: number,
+  conteudo: string
+) => {
+  const response = await scoreApi.patch(
+    `/regras/${id}`,
+    { conteudo },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response.data;
 };
