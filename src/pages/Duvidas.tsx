@@ -4,6 +4,8 @@ import logo from "../assets/HS2.ico";
 import axios from "axios";
 import { getAuthToken, getUsuarioAtual } from "../services/api";
 import { useDuvida } from "../context/DuvidaContext";
+import ReactMarkdown from "react-markdown";
+
 
 interface Mensagem {
   texto: string;
@@ -164,7 +166,7 @@ const Duvidas: React.FC = () => {
                         : "bg-blue-200 text-blue-900"
                     }`}
                   >
-                    {msg.texto}
+                    <ReactMarkdown>{msg.texto}</ReactMarkdown>
                   </div>
                 </div>
               ))}
@@ -191,11 +193,13 @@ const Duvidas: React.FC = () => {
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             onKeyDown={handleKeyDown}
+            disabled={digitandoIA}
           />
           <button
             onClick={handleEnviar}
             aria-label="Enviar"
-            className="ml-2 p-2"
+            disabled={digitandoIA}
+            className={`ml-2 p-2 ${digitandoIA ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

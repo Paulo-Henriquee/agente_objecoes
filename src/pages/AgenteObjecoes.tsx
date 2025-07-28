@@ -8,6 +8,8 @@ import ModalConfirmarSaida from "../components/ModalConfirmarSaida";
 import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
 import logo from "../assets/HS2.ico";
+import ReactMarkdown from "react-markdown";
+
 
 interface Mensagem {
   texto: string;
@@ -287,7 +289,7 @@ const AgenteObjecoes: React.FC = () => {
           className="flex-1 bg-white/10 rounded-lg p-4 overflow-y-auto mb-4 space-y-2 max-h-[50vh]"
         >
           {mensagens.length === 0 ? (
-            <p className="text-center text-gray-300">Nenhuma mensagem ainda...</p>
+            <p className="text-center text-gray-300">Só um momento! Sua simulação já vai começar...</p>
           ) : (
             <>
               {mensagens.map((msg, index) => (
@@ -302,7 +304,7 @@ const AgenteObjecoes: React.FC = () => {
                         : "bg-blue-200 text-blue-900"
                     }`}
                   >
-                    {msg.texto}
+                    <ReactMarkdown>{msg.texto}</ReactMarkdown>
                   </div>
                 </div>
               ))}
