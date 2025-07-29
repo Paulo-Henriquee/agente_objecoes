@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { getAuthToken, getUsuarioAtual } from "../services/api";
-import { iniciarSimulacao } from "../services/scoreapi";
+import { iniciarSimulacao, atualizarRanking } from "../services/scoreapi";
 import axios from "axios";
 import DificuldadeModal from "../components/DificuldadeModal";
 import ModalFinal from "../components/ModalFinal";
@@ -114,13 +114,27 @@ const AgenteObjecoes: React.FC = () => {
   }, [nivel, setor]);
 
 
-  const extrairNota = (resposta: string): number => {
-    const match = resposta.match(/\*\*Nota final da resposta:\*\*\s?\*\*(\d+)\/10\*\*/);
+  const extrairNota = (texto: string): number => {
+    const match = texto.match(/Nota da rodada[:\s]*?(\d{1,2})\/10/i);
     return match ? parseInt(match[1], 10) : 0;
   };
 
-  const ehFeedback = (texto: string) => texto.includes("**Avaliação por critério:**");
-  const ehObjeção = (texto: string) => texto.includes("**Objeção");
+  const ehFeedback = (texto: string) => {
+    return (
+      texto.includes("Avaliando sua resposta") ||
+      texto.includes("Avaliação da resposta") ||
+      texto.includes("Nota da rodada")
+    );
+  };
+
+  const extrairObjeção = (texto: string): string | null => {
+    const match = texto.match(/Objeção:\s?"([^"]+)"/);
+    return match ? match[1] : null;
+  };
+
+  const ehFinalDaSimulacao = (texto: string): boolean => {
+    return texto.includes("Isso conclui nossa simulação de hoje");
+  };
 
   const enviarMensagemParaIA = async (mensagemTexto: string) => {
     try {
@@ -149,19 +163,20 @@ const AgenteObjecoes: React.FC = () => {
 
       const respostaIA = response.data.resposta;
 
-      if (ehFeedback(respostaIA)) {
-        const nota = extrairNota(respostaIA);
-        setPontuacoes((prev) => [...prev, nota]);
+      const notaExtraida = extrairNota(respostaIA);
+      if (notaExtraida > 0 || respostaIA.includes("Nota da rodada")) {
+        setPontuacoes((prev) => [...prev, notaExtraida]);
         setFeedbacks((prev) => [...prev, respostaIA]);
       }
 
-      if (ehObjeção(respostaIA)) {
-        setMensagensIa((prev) => [...prev, respostaIA]);
+      const conteudoObjeção = extrairObjeção(respostaIA);
+      if (conteudoObjeção) {
+        setMensagensIa((prev) => [...prev, conteudoObjeção]);
         await axios.patch(
           `https://scoreapi.healthsafetytech.com/objeções/${nivel}`,
           [
             {
-              Objeção: respostaIA,
+              Objeção: conteudoObjeção,
               setor: setor || "geral"
             }
           ],
@@ -172,6 +187,36 @@ const AgenteObjecoes: React.FC = () => {
       }
 
       setMensagens((prev) => [...prev, { texto: respostaIA, tipo: "ia" }]);
+
+       // ⏳ Finalização (apenas quando IA disser que terminou)
+      if (ehFinalDaSimulacao(respostaIA)) {
+        setShowCountdown(true);
+        setCountdown(10); // inicia o countdown de encerramento
+        const nota = extrairNota(respostaIA) || 0;
+        const novaLista = [...pontuacoes, nota];
+        setPontuacoes(novaLista);
+
+        await axios.post(
+          "https://scoreapi.healthsafetytech.com/historico/",
+          {
+            id_simulacao: idSimulacao,
+            mensagens_ia: mensagensIa,
+            respostas_usuario: respostasUsuarioHistorico,
+            pontuacoes: novaLista,
+            feedbacks: [...feedbacks, respostaIA],
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const pontuacaoTotal = novaLista.reduce((acc, val) => acc + val, 0);
+        await atualizarRanking(token, Number(user.id), pontuacaoTotal);
+
+        await axios.post(
+          `https://scoreapi.healthsafetytech.com/simulacoes/${idSimulacao}/finalizar?pontuacao_total=${pontuacaoTotal}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
 
       if (pontuacoes.length + 1 >= 10) {
         setTesteFinalizado(true);
@@ -330,10 +375,10 @@ const AgenteObjecoes: React.FC = () => {
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             onKeyDown={handleKeyDown}
-            // onPaste={(e) => {
-            //  e.preventDefault();
-            //  alert("Colar não é permitido.");
-            //}}
+             onPaste={(e) => {
+              e.preventDefault();
+              alert("Colar não é permitido.");
+            }}
             disabled={bloquearEnvio || digitandoIA}
           />
           <button

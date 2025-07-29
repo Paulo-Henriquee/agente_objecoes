@@ -71,3 +71,21 @@ export const updateRegra = async (
 
   return response.data;
 };
+
+export const atualizarRanking = async (
+  token: string,
+  id_usuario: number,
+  nova_pontuacao: number
+) => {
+  const response = await scoreApi.post(
+    `/ranking/atualizar?id_usuario=${id_usuario}&nova_pontuacao=${nova_pontuacao}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
