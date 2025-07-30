@@ -17,6 +17,7 @@ const Duvidas: React.FC = () => {
   const { mensagens, setMensagens } = useDuvida();
   const [digitandoIA, setDigitandoIA] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleEnviar = async () => {
     if (!mensagem.trim()) return;
@@ -121,6 +122,13 @@ const Duvidas: React.FC = () => {
     carregarHistorico();
   }, []);
 
+  useEffect(() => {
+  if (!digitandoIA && inputRef.current) {
+    inputRef.current.focus();
+  }
+  }, [digitandoIA]);
+
+
   return (
     <div
       className="h-full w-full flex items-center justify-center bg-cover bg-center px-4 py-4"
@@ -187,6 +195,7 @@ const Duvidas: React.FC = () => {
         {/* Campo de entrada */}
         <div className="flex items-center mt-2">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Digite sua dúvida aqui..."
             className="flex-1 rounded-full px-4 py-2 text-gray-900 text-sm focus:outline-none border border-gray-300"

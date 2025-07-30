@@ -29,6 +29,7 @@ const AgenteObjecoes: React.FC = () => {
   const [colorToggle, setColorToggle] = useState(true);
   const [mostrarModalSaida, setMostrarModalSaida] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [idSimulacao, setIdSimulacao] = useState<string | null>(null);
   const [mensagensIa, setMensagensIa] = useState<string[]>([]);
@@ -113,6 +114,11 @@ const AgenteObjecoes: React.FC = () => {
   }
   }, [nivel, setor]);
 
+  useEffect(() => {
+  if (!bloquearEnvio && !digitandoIA && inputRef.current) {
+    inputRef.current.focus();
+  }
+  }, [bloquearEnvio, digitandoIA]);
 
   const extrairNota = (texto: string): number => {
     const match = texto.match(/Nota da rodada[:\s]*?(\d{1,2})\/10/i);
@@ -299,7 +305,7 @@ const AgenteObjecoes: React.FC = () => {
               Tempo restante para finalizar simulação: {countdown}s
             </p>
             <button
-              onClick={() => navigate("/rank")}
+              onClick={() => navigate("/rank?refresh=true")}
               className="mt-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 text-sm rounded-full transition"
             >
               VER RANK
@@ -347,6 +353,7 @@ const AgenteObjecoes: React.FC = () => {
 
         <div className="flex items-center mt-2">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Digite sua resposta como vendedor..."
             className="flex-1 rounded-full px-4 py-2 text-gray-900 text-sm focus:outline-none border border-gray-300"
