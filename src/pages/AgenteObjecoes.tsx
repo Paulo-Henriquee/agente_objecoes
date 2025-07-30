@@ -217,29 +217,7 @@ const AgenteObjecoes: React.FC = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
       }
-
-      if (pontuacoes.length + 1 >= 10) {
-        setTesteFinalizado(true);
-        await axios.post(
-          "https://scoreapi.healthsafetytech.com/historico/",
-          {
-            id_simulacao: idSimulacao,
-            mensagens_ia: mensagensIa,
-            respostas_usuario: respostasUsuarioHistorico,
-            pontuacoes: [...pontuacoes, extrairNota(respostaIA)],
-            feedbacks: [...feedbacks, respostaIA],
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        const pontuacaoTotal = [...pontuacoes, extrairNota(respostaIA)].reduce((acc, val) => acc + val, 0);
-
-        await axios.post(
-          `https://scoreapi.healthsafetytech.com/simulacoes/${idSimulacao}/finalizar?pontuacao_total=${pontuacaoTotal}`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
+      
     } catch (err) {
       console.error("Erro ao falar com a IA:", err);
       setMensagens((prev) => [...prev, { texto: "⚠️ Erro ao se conectar com a IA.", tipo: "ia" }]);
