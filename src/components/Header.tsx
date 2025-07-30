@@ -123,7 +123,10 @@ const Header: React.FC = () => {
             }`}
           >
             <div className="flex items-center justify-between py-3 mb-3">
-              <span className="font-bold text-lg text-blue-700">Menu</span>
+              <div className="flex items-center gap-2">
+                <img src={logo} alt="Logo" className="w-6 h-6" />
+                <span className="font-bold text-lg text-blue-700">Menu</span>
+              </div>
               <button
                 onClick={fecharMenu}
                 className="text-gray-600 text-2xl leading-none focus:outline-none"
@@ -138,22 +141,22 @@ const Header: React.FC = () => {
                 const isActive = location.pathname === item.to;
                 const iconColor = isActive ? "1E3A8A" : "1D4ED8";
 
-                let id = "";
+                let iconUrl = "";
                 switch (item.to) {
                   case "/inicio":
-                    id = "83326";
+                    iconUrl = `https://img.icons8.com/?size=100&id=83326&format=png&color=${iconColor}`;
                     break;
                   case "/chat":
-                    id = "BgCyOQRJulgd";
+                    iconUrl = `https://img.icons8.com/?size=100&id=BgCyOQRJulgd&format=png&color=${iconColor}`;
                     break;
                   case "/rank":
-                    id = "49FsAPtMkn2q";
+                    iconUrl = `https://img.icons8.com/?size=100&id=ZogZNT13aoJZ&format=png&color=${iconColor}`; // com cor dinâmica agora!
                     break;
                   case "/duvidas":
-                    id = "98973";
+                    iconUrl = `https://img.icons8.com/?size=100&id=98973&format=png&color=${iconColor}`;
                     break;
                   case "/configuracoes":
-                    id = "2969";
+                    iconUrl = `https://img.icons8.com/?size=100&id=2969&format=png&color=${iconColor}`;
                     break;
                 }
 
@@ -169,7 +172,7 @@ const Header: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={`https://img.icons8.com/?size=100&id=${id}&format=png&color=${iconColor}`}
+                      src={iconUrl}
                       alt={item.label}
                       className="w-6 h-6 mr-2"
                     />

@@ -2,6 +2,9 @@ import React from "react";
 import fundo from "../assets/fundo.png";
 import logo from "../assets/HS2.ico";
 import { useRanking } from "../context/RankingContext";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 
 const getColorByPosition = (index: number) => {
   if (index === 0) return "bg-cyan-500 text-cyan-900 font-bold";
@@ -11,7 +14,19 @@ const getColorByPosition = (index: number) => {
 };
 
 const Rank: React.FC = () => {
-  const { ranking, loading } = useRanking();
+  const { ranking, loading, fetchRanking } = useRanking();
+
+  const location = useLocation();
+
+    useEffect(() => {
+      const params = new URLSearchParams(location.search);
+      const shouldRefresh = params.get("refresh");
+
+      if (shouldRefresh === "true" && fetchRanking) {
+        fetchRanking(); // força recarregamento do ranking
+      }
+    }, [location]);
+
 
   if (loading) {
     return (

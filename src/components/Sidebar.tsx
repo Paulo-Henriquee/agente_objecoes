@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
       to: "/rank",
       icon: (isActive: boolean) => (
         <img
-          src={`https://img.icons8.com/?size=100&id=49FsAPtMkn2q&format=png&color=${
+          src={`https://img.icons8.com/?size=100&id=ZogZNT13aoJZ&format=png&color=${
             isActive ? "04436E" : "FFFFFF"
           }`}
           alt="Rank"
