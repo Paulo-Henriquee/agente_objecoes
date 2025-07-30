@@ -375,10 +375,10 @@ const AgenteObjecoes: React.FC = () => {
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             onKeyDown={handleKeyDown}
-             onPaste={(e) => {
-              e.preventDefault();
-              alert("Colar não é permitido.");
-            }}
+            // onPaste={(e) => {
+            //  e.preventDefault();
+            //  alert("Colar não é permitido.");
+            //}}
             disabled={bloquearEnvio || digitandoIA}
           />
           <button
