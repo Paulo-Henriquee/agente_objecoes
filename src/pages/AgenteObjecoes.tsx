@@ -45,7 +45,7 @@ const AgenteObjecoes: React.FC = () => {
 
   useEffect(() => {
     const ultima = mensagens[mensagens.length - 1];
-    if (respostasUsuario >= 50 && ultima?.tipo === "ia" && !showCountdown) {
+    if (respostasUsuario >= 100 && ultima?.tipo === "ia" && !showCountdown) {
       setBloquearEnvio(true);
       setShowCountdown(true);
       setCountdown(10);
