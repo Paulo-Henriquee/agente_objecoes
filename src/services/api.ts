@@ -24,6 +24,24 @@ authApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Interceptor para lidar com erros de autenticação (ex: token expirado)
+authApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token inválido ou expirado → limpar localStorage e redirecionar
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+
+      // Redirecionar para tela de login
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Busca o usuário pelo ID usando a instância do axios
 export const getUsuarioPorId = async (id: number): Promise<{ username: string }> => {
   const response = await authApi.get(`/users/${id}`);
