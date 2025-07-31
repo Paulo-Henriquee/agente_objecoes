@@ -27,19 +27,28 @@ export const iniciarSimulacao = async (
   id_usuario: string,
   dificuldade: string
 ) => {
-  const response = await axios.post(
-    "https://scoreapi.healthsafetytech.com/simulacoes",
-    {
-      id_usuario,
-      dificuldade,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  try {
+    const response = await axios.post(
+      "https://scoreapi.healthsafetytech.com/simulacoes",
+      {
+        id_usuario,
+        dificuldade,
       },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 403) {
+      alert(error.response.data?.detail || "Acesso negado.");
+    } else {
+      alert("Erro ao iniciar simulação. Tente novamente.");
     }
-  );
-  return response.data;
+    throw error; // lança novamente se você quiser tratar acima (ex: em um componente React)
+  }
 };
 
 // ✅ Buscar todas as regras do sistema
