@@ -121,7 +121,7 @@ const AgenteObjecoes: React.FC = () => {
   }, [bloquearEnvio, digitandoIA]);
 
   const extrairNota = (texto: string): number => {
-    const match = texto.match(/\*{0,2}Nota da rodada\*{0,2}[:\s]*?(\d{1,2})\/10/i);
+    const match = texto.match(/\*{0,2}Nota da rodada\*{0,2}[:\s]*?(\d{1,3})\/\d{1,3}/i);
     return match ? parseInt(match[1], 10) : 0;
   };
 
