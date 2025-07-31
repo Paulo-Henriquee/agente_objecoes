@@ -121,7 +121,7 @@ const AgenteObjecoes: React.FC = () => {
   }, [bloquearEnvio, digitandoIA]);
 
   const extrairNota = (texto: string): number => {
-    const match = texto.match(/Nota da rodada[:\s]*?(\d{1,2})\/10/i);
+    const match = texto.match(/\*{0,2}Nota da rodada\*{0,2}[:\s]*?(\d{1,2})\/10/i);
     return match ? parseInt(match[1], 10) : 0;
   };
 
@@ -134,7 +134,7 @@ const AgenteObjecoes: React.FC = () => {
   };
 
   const extrairObjeção = (texto: string): string | null => {
-    const match = texto.match(/Objeção:\s?"([^"]+)"/);
+    const match = texto.match(/\*{0,2}Objeção:\*{0,2}\s*"?([^"]+)"?/);
     return match ? match[1] : null;
   };
 
