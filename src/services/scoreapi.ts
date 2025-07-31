@@ -30,10 +30,7 @@ export const iniciarSimulacao = async (
   try {
     const response = await axios.post(
       "https://scoreapi.healthsafetytech.com/simulacoes",
-      {
-        id_usuario,
-        dificuldade,
-      },
+      { id_usuario, dificuldade },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -43,11 +40,10 @@ export const iniciarSimulacao = async (
     return response.data;
   } catch (error: any) {
     if (error.response?.status === 403) {
-      alert(error.response.data?.detail || "Acesso negado.");
+      throw { type: "limite-diario", message: error.response.data?.detail };
     } else {
-      alert("Erro ao iniciar simulação. Tente novamente.");
+      throw { type: "erro-desconhecido", message: "Erro ao iniciar simulação" };
     }
-    throw error; // lança novamente se você quiser tratar acima (ex: em um componente React)
   }
 };
 

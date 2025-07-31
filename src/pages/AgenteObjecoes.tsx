@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
 import logo from "../assets/HS2.ico";
 import ReactMarkdown from "react-markdown";
+import ModalLimite from "../components/ModalLimite";
 
 
 interface Mensagem {
@@ -37,6 +38,7 @@ const AgenteObjecoes: React.FC = () => {
   const [pontuacoes, setPontuacoes] = useState<number[]>([]);
   const [feedbacks, setFeedbacks] = useState<string[]>([]);
   const [setor, setSetor] = useState("geral");
+  const [limiteAtingido, setLimiteAtingido] = useState(false);
 
   useEffect(() => {
     if (chatRef.current) {
@@ -121,7 +123,7 @@ const AgenteObjecoes: React.FC = () => {
   }, [bloquearEnvio, digitandoIA]);
 
   const extrairNota = (texto: string): number => {
-    const match = texto.match(/\*{0,2}Nota da rodada\*{0,2}[:\s]*?(\d{1,3})\/\d{1,3}/i);
+    const match = texto.match(/\*{0,2}Nota da rodada\*{0,2}[:\s]*?(\d{1,2})\/10/i);
     return match ? parseInt(match[1], 10) : 0;
   };
 
@@ -261,8 +263,13 @@ const AgenteObjecoes: React.FC = () => {
             const simulacao = await iniciarSimulacao(token, String(usuario.id), nivelEscolhido);
             setIdSimulacao(simulacao.id_simulacao);
             setNivel(nivelEscolhido);
-          } catch (err) {
-            console.error("Erro ao iniciar simulação:", err);
+          } catch (err: any) {
+            if (err.type === "limite-diario") {
+              console.log(">>> LIMITE DIÁRIO DETECTADO <<<");
+              setLimiteAtingido(true); // ✅ exibe modal
+            } else {
+              console.error("Erro ao iniciar simulação:", err);
+            }
           }
         }}
       />
@@ -390,6 +397,7 @@ const AgenteObjecoes: React.FC = () => {
         <ModalConfirmarSaida onCancel={() => setMostrarModalSaida(false)} />
       )}
       {testeFinalizado && <ModalFinal />}
+      {limiteAtingido && <ModalLimite />}
     </div>
   );
 };

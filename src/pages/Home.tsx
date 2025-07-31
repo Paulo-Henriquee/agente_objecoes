@@ -29,10 +29,16 @@ const Home: React.FC = () => {
           <h1 className="text-3xl font-bold">Início</h1>
         </div>
 
-        <p className="mb-6">
+        <p className="mb-2 text-white text-lg">
           Seja bem-vindo ao sistema HealthScore,{" "}
           <span className="font-semibold">{user?.username}</span>!
         </p>
+
+        <p className="mb-6 text-sm text-gray-200 leading-relaxed">
+          O <strong>HealthScore</strong> é um sistema inteligente de simulação criado para <strong>treinar vendedores</strong> com base em objeções reais do mercado. Através de um <strong>ambiente gamificado</strong>, você será desafiado a responder de forma estratégica, empática e técnica às dúvidas e resistências comuns de clientes em negociações.
+        </p>
+
+
 
         <div className="flex flex-col gap-6">
           <h2 className="text-xl font-semibold">Regras de Uso do Sistema</h2>
