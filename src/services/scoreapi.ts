@@ -30,7 +30,10 @@ export const iniciarSimulacao = async (
   try {
     const response = await axios.post(
       "https://scoreapi.healthsafetytech.com/simulacoes",
-      { id_usuario, dificuldade },
+      {
+        id_usuario,
+        dificuldade,
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -39,11 +42,8 @@ export const iniciarSimulacao = async (
     );
     return response.data;
   } catch (error: any) {
-    if (error.response?.status === 403) {
-      throw { type: "limite-diario", message: error.response.data?.detail };
-    } else {
-      throw { type: "erro-desconhecido", message: "Erro ao iniciar simulação" };
-    }
+    // Apenas relança o erro para ser tratado no componente
+    throw error;
   }
 };
 

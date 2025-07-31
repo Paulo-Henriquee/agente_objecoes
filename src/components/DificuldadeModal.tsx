@@ -2,17 +2,27 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import fundo from "../assets/fundo.png";
 import logo from "../assets/HS2.ico";
+import ModalLimite from "./ModalLimite"; // ✅ importar o modal
 
 interface DificuldadeModalProps {
   onStart: (nivel: string) => void;
+  mostrarLimite?: boolean; // ✅ nova prop
 }
 
 // Opções de dificuldade sem "Profissional"
 const niveis = ["Fácil", "Médio", "Difícil"];
 
-const DificuldadeModal: React.FC<DificuldadeModalProps> = ({ onStart }) => {
+const DificuldadeModal: React.FC<DificuldadeModalProps> = ({
+  onStart,
+  mostrarLimite = false, // ✅ valor padrão
+}) => {
   const [nivelSelecionado, setNivelSelecionado] = React.useState("Fácil");
   const navigate = useNavigate();
+
+  // ✅ Se limite foi atingido, renderiza diretamente o ModalLimite
+  if (mostrarLimite) {
+    return <ModalLimite />;
+  }
 
   return (
     <div

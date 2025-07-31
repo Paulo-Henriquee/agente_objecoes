@@ -259,19 +259,23 @@ const AgenteObjecoes: React.FC = () => {
           try {
             const token = getAuthToken();
             if (!token) throw new Error("Token não encontrado.");
+
             const usuario = await getUsuarioAtual(token);
             const simulacao = await iniciarSimulacao(token, String(usuario.id), nivelEscolhido);
+
             setIdSimulacao(simulacao.id_simulacao);
             setNivel(nivelEscolhido);
           } catch (err: any) {
-            if (err.type === "limite-diario") {
-              console.log(">>> LIMITE DIÁRIO DETECTADO <<<");
-              setLimiteAtingido(true); // ✅ exibe modal
-            } else {
-              console.error("Erro ao iniciar simulação:", err);
+            // VERIFICA STATUS DO ERRO (ex: 403 = limite diário)
+            if (axios.isAxiosError(err) && err.response?.status === 403) {
+              setLimiteAtingido(true);
+              return; // 👈 encerra aqui corretamente
             }
+
+            console.error("Erro ao iniciar simulação:", err);
           }
         }}
+        mostrarLimite={limiteAtingido} // 👈 novo controle
       />
     );
   }
